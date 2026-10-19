@@ -1,0 +1,4 @@
+# app-ads.txt for Homeward Paws (Digitack (Pty) Ltd)
+# Before launch, replace the line below with the exact line shown in
+# AdMob > Apps > View all apps > app-ads.txt (your publisher ID is pub-XXXXXXXXXXXXXXXX).
+# google.com, pub-0000000000000000, DIRECT, f08c47fec0942fa0

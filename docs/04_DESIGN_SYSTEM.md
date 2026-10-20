@@ -13,7 +13,7 @@ Adopted from the mockup:
 - Rounded friendly typeface (Nunito)
 - Soft-tinted pill status badges
 - Photo-led hero card and horizontal "nearby" carousels
-- Raised circular central Report button
+- Central Report tab using the same outlined icon treatment as the other tabs
 - Round tinted icon tiles for features and steps
 - Logo direction: house roof, heart, dog and cat silhouette
 
@@ -115,7 +115,7 @@ Spacing scale: 4, 8, 12, 16, 20, 24, 32, 40, 48. Screen horizontal margin: 20 dp
 | `pill` | 999 | Status chips, filter chips |
 | `circle` | 50% | Icon tiles, avatars, Report FAB |
 
-Elevation is soft and warm: low-opacity navy shadows, never harsh black. Define `shadowCard` (subtle) and `shadowRaised` (Report FAB, sheets). Cards use a white surface, a hairline `border` and `shadowCard`, with clear pressed feedback such as a slight scale or tint. Centralise radii and shadows rather than restyling per screen.
+Elevation is soft and warm: low-opacity navy shadows, never harsh black. Define `shadowCard` (subtle) and `shadowRaised` (sheets and other deliberately elevated controls). Cards use a white surface, a hairline `border` and `shadowCard`, with clear pressed feedback such as a slight scale or tint. Centralise radii and shadows rather than restyling per screen.
 
 ## 5. Report Identity
 
@@ -129,11 +129,11 @@ Elevation is soft and warm: low-opacity navy shadows, never harsh black. Define 
 
 ### General
 
-`ScreenContainer`, `AppHeader`, `SectionHeader`, `PrimaryButton`, `SecondaryButton`, `TextButton`, `IconButton`, `IconTile`, `StatusChip`, `InfoBanner`, `ConfirmationDialog`, `EmptyState`, `LoadingState`, `ErrorState`, `HeroCard`, `ReportFab`.
+`ScreenContainer`, `AppHeader`, `SectionHeader`, `PrimaryButton`, `SecondaryButton`, `TextButton`, `IconButton`, `IconTile`, `StatusChip`, `InfoBanner`, `ConfirmationDialog`, `EmptyState`, `LoadingState`, `ErrorState`, `HeroCard`.
 
 - `IconTile`: a circular tinted tile with an icon, using `primaryLight`, `accentLight`, `highlightLight` or a status `tint`. Used for feature lists, "How it works" steps, urgent action cards and empty states.
 - `HeroCard`: a rounded `xl` card with a photo or illustration and warm text, used on Home and Welcome. See §8.
-- `ReportFab`: the raised circular centre tab button. It has a teal fill, a white paw-plus icon, a white ring and `shadowRaised`. It opens the Report Menu and carries the accessibility label "Report an animal".
+- The centre Report tab uses the same standard icon treatment as the other tabs, with MaterialCommunityIcons `plus-circle-outline` and the accessibility label "Report an animal".
 
 ### Forms
 
@@ -183,7 +183,7 @@ The "How it works" 3-step strip (Report → Share → Reunite, using `IconTile`s
 
 ## 9. Bottom Navigation
 
-Five destinations: Home, Browse, **Report** (raised `ReportFab` in the centre), Following, Profile. The active tab uses `primary` icon and label; inactive tabs use `textSecondary`. Labels are always visible. The tab bar is a white surface with a hairline top border.
+Five destinations: Home, Browse, **Report**, Following, Profile. Report uses the standard MaterialCommunityIcons `plus-circle-outline` at the same size and alignment as the other tab icons. The active tab uses `primary` icon and label; inactive tabs use `textSecondary`. Labels are always visible. The tab bar is a white surface with a hairline top border.
 
 ## 10. Browse Layout
 
@@ -251,7 +251,7 @@ Confirm the reference and offer a useful next action. Celebration (warm hero, he
 - Verified colour contrast (see §2 status rules)
 - Text and icon labels with status colour
 - Logical screen-reader focus
-- Descriptive accessibility labels, including the `ReportFab`
+- Descriptive accessibility labels, including the Report tab action
 - Practical touch targets
 - No flashing
 - Plain language

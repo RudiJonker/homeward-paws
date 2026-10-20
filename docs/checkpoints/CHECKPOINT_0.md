@@ -9,7 +9,7 @@ Complete.
 - Expo SDK 57 JavaScript application with exactly pinned dependencies
 - Public, member, main-tab and placeholder admin navigation
 - Home, Browse, Report, Following and Profile skeleton screens
-- Central raised Report action with Missing, Found and Sighting choices
+- Central Report action with Missing, Found and Sighting choices
 - Shared theme tokens and reusable base components
 - Supplied brand and Android assets
 - Loading screen and general error boundary

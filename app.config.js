@@ -16,6 +16,7 @@ export default {
     },
     android: {
       package: IS_PRODUCTION ? 'za.co.homewardpaws.app' : 'za.co.homewardpaws.app.dev',
+      softwareKeyboardLayoutMode: 'resize',
       adaptiveIcon: {
         foregroundImage: './assets/images/adaptive-icon.png',
         monochromeImage: './assets/images/adaptive-icon-monochrome.png',
@@ -26,7 +27,8 @@ export default {
         'android.permission.READ_MEDIA_VIDEO',
         'android.permission.READ_EXTERNAL_STORAGE',
         'android.permission.WRITE_EXTERNAL_STORAGE',
-        'android.permission.ACCESS_BACKGROUND_LOCATION'
+        'android.permission.ACCESS_BACKGROUND_LOCATION',
+        'android.permission.RECORD_AUDIO'
       ]
     },
     web: {
@@ -41,7 +43,10 @@ export default {
           resizeMode: 'contain',
           backgroundColor: '#FBF7F2'
         }
-      ]
+      ],
+      ['expo-location', { locationWhenInUsePermission: 'Allow Homeward Paws to suggest your area. Your location remains private.' }],
+      ['expo-image-picker', { photosPermission: false, cameraPermission: 'Allow Homeward Paws to take a profile photo.' }],
+      'expo-web-browser'
     ],
     extra: {
       appVariant: IS_PRODUCTION ? 'production' : 'development'

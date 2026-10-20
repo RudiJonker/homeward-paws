@@ -1,0 +1,35 @@
+project_id = "homeward-paws"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+shadow_port = 54320
+major_version = 17
+
+[studio]
+enabled = true
+port = 54323
+
+[auth]
+enabled = true
+site_url = "homewardpaws://auth/verify"
+additional_redirect_urls = ["homewardpaws://auth/verify", "homewardpaws://auth/reset"]
+enable_signup = true
+
+[auth.email.template.confirmation]
+subject = "Your Homeward Paws verification code"
+content_path = "./supabase/templates/confirmation.html"
+
+[storage]
+enabled = true
+file_size_limit = "50MiB"
+
+[functions.delete-account]
+verify_jwt = true
+entrypoint = "./functions/delete-account/index.js"

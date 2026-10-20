@@ -1,9 +1,8 @@
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { ScreenContainer } from '../../components/ScreenContainer';
 import { colors, spacing, typography } from '../../theme';
-import { routes } from '../../navigation/routes';
 
 const logo = require('../../../assets/brand/logo-horizontal.png');
 
@@ -20,11 +19,10 @@ export function WelcomeScreen({ navigation }) {
         <Text style={styles.step}>2  Share</Text>
         <Text style={styles.step}>3  Reunite</Text>
       </View>
-      <PrimaryButton
-        label="Explore the app"
-        onPress={() => navigation.getParent()?.replace(routes.member)}
-      />
-      <Text style={styles.note}>Checkpoint 0 preview · Account access arrives in the next milestone.</Text>
+      <PrimaryButton label="Create account" onPress={() => navigation.navigate('SignUp')} />
+      <Pressable onPress={() => navigation.navigate('Login')}><Text style={styles.login}>Log in</Text></Pressable>
+      <Pressable accessibilityRole="button" onPress={() => navigation.navigate('GuestBrowse')} style={styles.guestButton}><Text style={styles.guestLabel}>Browse as guest</Text></Pressable>
+      <Text style={styles.note}>You can browse public reports without an account. Publishing and contributing require a completed member profile.</Text>
     </ScreenContainer>
   );
 }
@@ -37,5 +35,8 @@ const styles = StyleSheet.create({
   body: { ...typography.body, color: colors.textSecondary, textAlign: 'center' },
   steps: { gap: spacing.md, padding: spacing.xl, marginBottom: spacing.xxl, borderRadius: 18, backgroundColor: colors.primaryLight },
   step: { ...typography.bodyStrong, color: colors.primaryDark },
-  note: { ...typography.caption, color: colors.textSecondary, textAlign: 'center', marginTop: spacing.lg }
+  note: { ...typography.caption, color: colors.textSecondary, textAlign: 'center', marginTop: spacing.lg },
+  login: { ...typography.button, color: colors.primary, textAlign: 'center', padding: spacing.lg },
+  guestButton: { minHeight: 48, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: colors.primary, borderRadius: 12, paddingHorizontal: spacing.xl },
+  guestLabel: { ...typography.button, color: colors.primary }
 });

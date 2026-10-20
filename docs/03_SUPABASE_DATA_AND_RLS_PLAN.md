@@ -11,6 +11,7 @@
 - Store important state changes as append-oriented case events.
 - Use soft deletion, closure and archiving for important records.
 - Enable RLS on every business table before client access.
+- Add explicit Data API grants in the same migration as every new public-schema table; RLS still determines which rows each role may access.
 - Never ship the service-role key in the app.
 - Use protected database functions/transactions for multi-record business actions.
 

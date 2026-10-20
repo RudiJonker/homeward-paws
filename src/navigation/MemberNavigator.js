@@ -1,32 +1,25 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { BrowseScreen } from '../screens/main/BrowseScreen';
 import { FollowingScreen } from '../screens/main/FollowingScreen';
 import { HomeScreen } from '../screens/main/HomeScreen';
-import { ProfileScreen } from '../screens/main/ProfileScreen';
 import { ReportMenuScreen } from '../screens/main/ReportMenuScreen';
-import { colors, shadows, typography } from '../theme';
+import { colors, typography } from '../theme';
 import { routes } from './routes';
+import { ProfileNavigator } from './ProfileNavigator';
 
 const Tab = createBottomTabNavigator();
 
 const icons = {
   [routes.home]: 'home-outline',
   [routes.browse]: 'magnify',
+  [routes.report]: 'plus-circle-outline',
   [routes.following]: 'heart-outline',
   [routes.profile]: 'account-outline'
 };
-
-function ReportIcon({ focused }) {
-  return (
-    <View style={[styles.reportFab, focused && styles.reportFabFocused]}>
-      <MaterialCommunityIcons name="paw" color={colors.textOnPrimary} size={28} />
-    </View>
-  );
-}
 
 export function MemberNavigator() {
   const insets = useSafeAreaInsets();
@@ -56,17 +49,15 @@ export function MemberNavigator() {
       <Tab.Screen
         name={routes.report}
         component={ReportMenuScreen}
-        options={{ tabBarAccessibilityLabel: 'Report an animal', tabBarIcon: ReportIcon }}
+        options={{ tabBarAccessibilityLabel: 'Report an animal' }}
       />
       <Tab.Screen name={routes.following} component={FollowingScreen} />
-      <Tab.Screen name={routes.profile} component={ProfileScreen} />
+      <Tab.Screen name={routes.profile} component={ProfileNavigator} />
     </Tab.Navigator>
   );
 }
 
 const styles = StyleSheet.create({
   tabBar: { paddingTop: 8, borderTopColor: colors.border, backgroundColor: colors.surface },
-  tabLabel: { ...typography.caption },
-  reportFab: { width: 58, height: 58, marginTop: -24, borderRadius: 29, borderWidth: 4, borderColor: colors.surface, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.primary, ...shadows.raised },
-  reportFabFocused: { backgroundColor: colors.primaryDark }
+  tabLabel: { ...typography.caption }
 });

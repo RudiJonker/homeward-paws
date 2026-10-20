@@ -16,7 +16,11 @@
 
 ### Flow
 
-Welcome → Create Account → Email Verification → Complete Profile → Set Home Area → Notification Explanation → Home.
+Welcome → Create Account → Enter Email Verification Code → Complete Profile → Set Home Area → Notification Explanation → Home.
+
+Email verification uses a one-time code entered inside the app. Signup must not depend on a browser successfully handing a custom deep link back to Android.
+
+Development exception: hosted email verification and password recovery remain inactive until a production SMTP provider is configured. They must be restored before launch; this does not change the production flow above.
 
 ### Required Profile Data
 

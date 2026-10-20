@@ -7,5 +7,6 @@ export const links = {
   deleteAccount: `${env.websiteUrl}/delete-account.html`,
   childSafety: `${env.websiteUrl}/child-safety.html`,
   help: `${env.websiteUrl}/safety.html`,
+  companyWebsite: 'https://digitack.co.za',
   supportEmail: 'info@digitack.co.za'
 };

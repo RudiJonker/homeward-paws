@@ -17,7 +17,7 @@ export function HelpSafetyScreen() {
 }
 
 export function AboutScreen() {
-  return <ScreenContainer><Text style={styles.title}>About Homeward Paws</Text><Text style={styles.body}>A free South African community app helping missing, found and sighted animals find their way home.</Text><Text style={styles.body}>Digitack (Pty) Ltd · Version 0.1.0</Text><LinkRow label={links.supportEmail} url={`mailto:${links.supportEmail}?subject=Homeward%20Paws%20support`} /></ScreenContainer>;
+  return <ScreenContainer><Text style={styles.title}>About Homeward Paws</Text><Text style={styles.body}>A free South African community app helping missing, found and sighted animals find their way home.</Text><Text style={styles.body}>Digitack (Pty) Ltd · Version 0.1.0</Text><LinkRow label={links.supportEmail} url={`mailto:${links.supportEmail}?subject=Homeward%20Paws%20support`} /><LinkRow label="Visit digitack.co.za" url={links.companyWebsite} /></ScreenContainer>;
 }
 
 const styles = StyleSheet.create({ title: { ...typography.screenTitle, color: colors.textPrimary, marginBottom: spacing.lg }, body: { ...typography.body, color: colors.textSecondary, marginBottom: spacing.lg }, list: { gap: spacing.sm }, row: { minHeight: 52, justifyContent: 'center', borderBottomWidth: 1, borderBottomColor: colors.border }, link: { ...typography.bodyStrong, color: colors.primary } });

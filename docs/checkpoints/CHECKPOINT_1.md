@@ -39,3 +39,4 @@ Google sign-in remains deferred. The email items were subsequently restored as n
 
 - Rudi confirmed a new account can verify its email using the six-digit code in the app. Signup confirmation is now code-only, matching password recovery; the old button is removed from the repository template and app instructions. The website and app retain link handling for emails sent before this change.
 - Rudi must replace the saved Confirm signup email template in the Supabase dashboard. No repository edit publishes that template automatically. Retest a newly delivered confirmation email after saving it.
+- Rudi subsequently confirmed both code-only templates were saved in Supabase and freshly sent signup-confirmation and password-reset emails completed successfully on the test device. The one-minute resend countdown is not code expiry. The six code-only template/app/doc files were committed and pushed on `feature/auth-email` as `567af34`.

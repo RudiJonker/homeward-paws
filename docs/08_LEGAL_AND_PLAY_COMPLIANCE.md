@@ -31,7 +31,7 @@ Contact: `info@digitack.co.za` everywhere. Subject conventions: "Privacy", "Dele
 - Found reports may use "anonymous finder" as the public identity.
 - Visitors can browse public reports without an account.
 
-Checkpoint 3 follow-up: the currently published privacy page still says an exact incident location can be public. Update and publish its wording to match the street-or-broader public-report rule before enabling report publication.
+Checkpoint 3 website update (22 October 2026): Andre published the street-or-broader rule on the live privacy page, including the warning not to put private details in free text or photos. The live page is the authoritative website copy; the tracked `Website/` archive is not a deployment source. Public report publication still requires server-side enforcement and SQL tests.
 
 ### Safety and moderation
 - Every report, sighting, photo and profile has **Report**, with reasons including **Child safety**.

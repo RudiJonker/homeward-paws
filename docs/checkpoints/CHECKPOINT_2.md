@@ -47,3 +47,4 @@
 - The functional exit gate is met: multiple animal profiles can be managed securely, and the second test member cannot see the first member's private animals or change their photos.
 - Share the EAS preview APK with Andre for independent device testing. Its artifact URL is temporary; the EAS build page is the durable reference.
 - Next active work is Checkpoint 3: the missing-animal-to-reunited vertical slice.
+- The Checkpoint 2 preview APK above is superseded for new testers because Supabase now requires email confirmation and that older build has no verification-code screen. Use the newer auth-capable preview build recorded in `CHECKPOINT_3.md` instead.

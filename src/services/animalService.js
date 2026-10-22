@@ -118,11 +118,12 @@ export async function reorderAnimalPhotos(animalId, photoIds) {
   if (error) throw error;
 }
 
-export async function listMyAnimals({ archived = false } = {}) {
-  const query = supabase
+export async function listMyAnimals({ archived = false, limit = null } = {}) {
+  const baseQuery = supabase
     .from('animals')
     .select('id, name, category, breed, sex, size, status, updated_at, animal_photos(storage_path, display_order, archived_at)')
     .order('updated_at', { ascending: false });
+  const query = Number.isInteger(limit) && limit > 0 ? baseQuery.limit(limit) : baseQuery;
 
   const { data, error } = archived
     ? await query.eq('status', 'archived')

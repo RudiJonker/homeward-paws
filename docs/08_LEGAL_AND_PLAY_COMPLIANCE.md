@@ -1,16 +1,16 @@
 # Homeward Paws Legal and Google Play Compliance
 
-The website (`https://homewardpaws.co.za/`) now publishes the privacy policy, terms, account deletion page and child safety standards. Google checks that the app behaves as those pages say. Treat this document as a requirement list: if a build would contradict it, stop and ask.
+The temporary website (`https://digitack.co.za/paws/`) publishes the privacy policy, terms, account deletion page and child safety standards until `homewardpaws.co.za` is live. Google checks that the app behaves as those pages say. Treat this document as a requirement list: if a build would contradict it, stop and ask.
 
 ## 1. Published URLs
 
 | Page | URL | Where the app links to it |
 |---|---|---|
-| Privacy policy | `https://homewardpaws.co.za/privacy-policy.html` | Signup (with acceptance), Profile › Privacy policy, Help |
-| Terms of use | `https://homewardpaws.co.za/terms.html` | Signup (with acceptance), Profile › Terms of use |
-| Delete account | `https://homewardpaws.co.za/delete-account.html` | Profile › Delete account (info line), Help |
-| Child safety standards | `https://homewardpaws.co.za/child-safety.html` | Help and Safety |
-| Help and safety | `https://homewardpaws.co.za/safety.html` | Help and Safety, Contact Support |
+| Privacy policy | `https://digitack.co.za/paws/privacy-policy.html` | Signup (with acceptance), Profile › Privacy policy, Help |
+| Terms of use | `https://digitack.co.za/paws/terms.html` | Signup (with acceptance), Profile › Terms of use |
+| Delete account | `https://digitack.co.za/paws/delete-account.html` | Profile › Delete account (info line), Help |
+| Child safety standards | `https://digitack.co.za/paws/child-safety.html` | Help and Safety |
+| Help and safety | `https://digitack.co.za/paws/safety.html` | Help and Safety, Contact Support |
 
 Store these as environment-driven constants (`EXPO_PUBLIC_WEBSITE_URL` plus paths), not hard-coded strings scattered across screens. Open them in the in-app browser or system browser.
 

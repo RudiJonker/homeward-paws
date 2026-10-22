@@ -50,7 +50,7 @@ A new member can create, complete, revisit and securely manage their own profile
 ### Build
 
 - My Animals
-- Multistep animal registration
+- Scrollable animal registration with all sections and a final review
 - Conditional fields for animal categories
 - Named colour selection
 - Identification, behaviour and health flags

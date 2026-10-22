@@ -4,11 +4,12 @@
 
 - Visitors may browse; publishing and contributing require a completed member profile.
 - Member-only actions selected by a visitor must resume after authentication.
-- Multistep forms preserve progress and validate each step.
+- Forms preserve entered values while the user moves through the current form and validate before saving.
 - Published reports retain a snapshot of the animal and incident at publication.
 - Important corrections and status changes enter the case timeline.
 - Public/private visibility is explained before publication.
 - No workflow exposes a private home or holding address automatically.
+- No public incident report exposes exact coordinates, a house number or a pin at a private point. The most precise public location is a street or public-landmark name; found-animal current whereabouts remain general-area only.
 - Report publication must be idempotent: repeated taps cannot create duplicates.
 - Failed uploads preserve textual data and offer retry.
 
@@ -50,7 +51,9 @@ No role is selected. New accounts are members.
 - Profile → My Animals
 - Missing flow when no animal exists
 
-### Steps
+### Sections on one scrollable screen
+
+Animal registration remains on one screen. Entered values stay visible while the member scrolls and edits; leaving the registration screen before saving discards the unsaved form.
 
 #### 3.1 Type
 
@@ -62,14 +65,14 @@ Choose Dog, Cat, Bird, Horse, Donkey, Rabbit, Reptile, Small Mammal, Farm Animal
 - Species and breed
 - Mixed breed
 - Sex
-- Date of birth when known, otherwise approximate age and estimation date
+- Estimated age as a whole number of years (0 for under one year); the app records the date of estimation when saving
 - Size
-- Approximate weight where useful
+- Estimated numeric weight where useful, with a fixed `Kg` suffix beside the input
 - Relationship: My animal, Family animal, Foster, Other; organisation relationships later
 
 #### 3.3 Appearance
 
-- Primary and secondary colours
+- One named primary colour and optional multiple named secondary colours, stored as stable codes; use Pattern and markings to describe an unlisted shade
 - Pattern and markings
 - Coat/feather/skin description
 - Eye colour
@@ -81,7 +84,7 @@ Choose Dog, Cat, Bird, Horse, Donkey, Rabbit, Reptile, Small Mammal, Farm Animal
 - Microchipped status; number private
 - Tag, band, tattoo or brand; full identifiers private
 - Sterilised status
-- Public incident health flags
+- Structured health needs with a description, private by default; the member may mark a flag eligible for a future public incident and confirms visibility when reporting
 - Private health notes
 - Veterinary practice, optional and private
 
@@ -139,11 +142,13 @@ Optional:
 - Other people/vehicles observed
 - Additional explanation
 
+For a missing report, ask one optional "Travelled towards" question with Known/Unknown choices. When known, accept a direction or landmark and any person or vehicle directly observed with the animal in the same answer. Do not prompt for speculation or accusations.
+
 Future dates/times are invalid. Suspected theft shows advice to contact SAPS separately.
 
 ### Step 4 — Last-Seen Location
 
-Methods: current location, map, manual address or home area. Store street/landmark, suburb, city, province, coordinates and accuracy. The reporter chooses exact or approximate public precision.
+Methods: current location, map (when a provider is chosen), manual entry or home area. Store street/landmark, suburb, city, province, coordinates and accuracy privately. Public missing reports default to suburb/city/province; the reporter may instead show a street or public-landmark name without house numbers. Exact coordinates and private addresses are never shown publicly. Copying a home area never copies home coordinates and remains suburb-only.
 
 ### Step 5 — Urgency, Behaviour and Contact
 

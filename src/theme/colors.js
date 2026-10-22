@@ -17,10 +17,14 @@ export const colors = {
   error: '#B3363C',
   missing: '#C8424A',
   missingTint: '#FBE6E7',
+  missingOnTint: '#9A2A31',
   found: '#D97820',
   foundTint: '#FCEEDD',
+  foundOnTint: '#8F4A0C',
   sighting: '#2F6FCE',
   sightingTint: '#E3EDFB',
+  sightingOnTint: '#1D4E9A',
   reunited: '#2E8456',
-  reunitedTint: '#E2F3E9'
+  reunitedTint: '#E2F3E9',
+  reunitedOnTint: '#1D5E3B'
 };

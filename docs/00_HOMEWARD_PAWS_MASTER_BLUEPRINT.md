@@ -129,7 +129,7 @@ See `01_PRODUCT_AND_USER_FLOWS.md` for full requirements.
 ## 9. Privacy Decisions
 
 - Home coordinates and private addresses are never copied automatically into public reports.
-- Missing and sighting incident locations may be exact or approximate by deliberate reporter choice.
+- Public incident locations show no more than a street or public-landmark name; the default for missing reports is suburb only. Exact coordinates and house numbers remain private, even when the reporter uses device location. Found-animal current whereabouts remain at general-area level only.
 - A found animal's private holding address is hidden; the public report shows a general area.
 - Full microchip, tag and ownership identifiers remain private.
 - Ownership evidence is private and stored separately.

@@ -6,10 +6,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BrowseScreen } from '../screens/main/BrowseScreen';
 import { FollowingScreen } from '../screens/main/FollowingScreen';
 import { HomeScreen } from '../screens/main/HomeScreen';
-import { ReportMenuScreen } from '../screens/main/ReportMenuScreen';
 import { colors, typography } from '../theme';
 import { routes } from './routes';
 import { ProfileNavigator } from './ProfileNavigator';
+import { ReportNavigator } from './ReportNavigator';
 
 const Tab = createBottomTabNavigator();
 
@@ -48,7 +48,7 @@ export function MemberNavigator() {
       <Tab.Screen name={routes.browse} component={BrowseScreen} />
       <Tab.Screen
         name={routes.report}
-        component={ReportMenuScreen}
+        component={ReportNavigator}
         options={{ tabBarAccessibilityLabel: 'Report an animal' }}
       />
       <Tab.Screen name={routes.following} component={FollowingScreen} />

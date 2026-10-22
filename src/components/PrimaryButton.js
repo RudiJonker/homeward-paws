@@ -18,5 +18,5 @@ export function PrimaryButton({ label, onPress, accessibilityLabel = label }) {
 const styles = StyleSheet.create({
   button: { minHeight: 48, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.primary, borderRadius: radii.md, paddingHorizontal: spacing.xl },
   pressed: { backgroundColor: colors.primaryDark },
-  label: { ...typography.button, color: colors.textOnPrimary }
+  label: { ...typography.button, color: colors.textOnPrimary, width: '100%', textAlign: 'center', textAlignVertical: 'center' }
 });

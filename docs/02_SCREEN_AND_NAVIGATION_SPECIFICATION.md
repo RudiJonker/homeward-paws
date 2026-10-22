@@ -88,6 +88,8 @@ These IDs must be used in mockups, tickets, tests and blueprint references.
 | 3.11 | Archived Animals | 2 |
 | 3.12 | Animal Report History | 3 |
 
+Registration sections 3.2–3.8 appear together on one scrollable screen. The member reviews all entries before saving at the bottom; Android Back leaves the unsaved form.
+
 ### Group 4 — Missing
 
 | ID | Screen | Checkpoint |

@@ -4,7 +4,7 @@ import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { colors, fonts, radii, spacing, typography } from '../../theme';
 
-export function FormField({ label, error, ...inputProps }) {
+export function FormField({ label, error, suffix, ...inputProps }) {
   const isPassword = Boolean(inputProps.secureTextEntry);
   const [passwordVisible, setPasswordVisible] = useState(false);
 
@@ -14,10 +14,12 @@ export function FormField({ label, error, ...inputProps }) {
       <View style={[styles.inputShell, inputProps.multiline && styles.multiline, error && styles.inputError]}>
         <TextInput
           {...inputProps}
+          accessibilityLabel={suffix ? `${label}, ${suffix}` : label}
           secureTextEntry={isPassword && !passwordVisible}
           style={[styles.input, inputProps.multiline && styles.multilineInput]}
           placeholderTextColor={colors.textSecondary}
         />
+        {suffix ? <Text style={styles.suffix}>{suffix}</Text> : null}
         {isPassword ? (
           <Pressable
             accessibilityRole="button"
@@ -42,6 +44,7 @@ const styles = StyleSheet.create({
   input: { flex: 1, minHeight: 48, color: colors.textPrimary, fontFamily: fonts.regular, fontSize: 16, paddingHorizontal: spacing.md },
   multiline: { minHeight: 100, alignItems: 'flex-start' },
   multilineInput: { minHeight: 98, paddingTop: spacing.md, textAlignVertical: 'top' },
+  suffix: { ...typography.bodyStrong, color: colors.textSecondary, paddingRight: spacing.md },
   visibilityButton: { width: 48, minHeight: 48, alignItems: 'center', justifyContent: 'center' },
   inputError: { borderColor: colors.error },
   error: { ...typography.caption, color: colors.error }

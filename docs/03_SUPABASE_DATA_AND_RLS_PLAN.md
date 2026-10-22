@@ -58,9 +58,9 @@ Core searchable fields:
 - Category, species and breed
 - Mixed-breed flag
 - Sex
-- Birth date or approximate age and estimation date
+- Estimated age in whole years and the date of estimation; the current registration UI does not ask for a birth date
 - Size and approximate weight
-- Primary/secondary colours
+- Primary/secondary colours as stable text codes (`primary_colours` holds at most one; `secondary_colours` holds multiple); legacy free-text descriptions are retained in pattern/markings during migration
 - Pattern, coat, eye colour and distinctive features
 - Sterilised and microchipped status
 - Profile status
@@ -147,6 +147,8 @@ Public precision:
 - Private
 
 Public queries must return only the permitted precision. Distance search may later use PostgreSQL geospatial support and appropriate indexes.
+
+For every public incident report, `Exact` is forbidden as a public precision. The public projection may include only a general area or an explicitly chosen street/public-landmark name without a house number; found-animal current whereabouts stay at general-area level. Private coordinates must never be returned through public report queries or used as the position of a public map pin. Enforce this in the publication function and public read surface, not only in the mobile UI. `Exact` remains usable only for private location records.
 
 ## 6. Case History and Relationships
 

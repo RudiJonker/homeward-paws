@@ -19,7 +19,7 @@ Maintain:
 - Later: verified organisation manager and ordinary organisation staff
 - At least one dog, cat, bird and horse/donkey profile
 - Active, draft, reunited, closed and archived reports
-- Exact and approximate locations
+- Exact private device locations and street-or-broader public missing locations
 - One invalid/suspended account
 
 Use test-only animals and contact information.
@@ -57,12 +57,15 @@ Use test-only animals and contact information.
 - Register each supported category
 - Conditional fields
 - Unknown values
-- Birth date versus approximate age
+- Numeric estimated age (including 0 for under one year) and numeric estimated weight with the visible `Kg` suffix
+- Scrolling between sections preserves all entered values; leaving the form without saving discards them
 - Multiple colours/markings
+- Structured health needs: description required, private by default, edit and clear without exposing private notes
 - Three-image limit, reorder, replacement and compression
 - Upload failure recovery
 - Private identifier not public
 - Edit, archive and restore
+- Delete a safe or archived animal profile and its photos after explicit confirmation; reject deletion of an animal with an active case; preserve other animals and photos
 - Member A cannot read/change Member B animal
 - Archived animal cannot accidentally create an invalid incident
 
@@ -75,7 +78,7 @@ Use test-only animals and contact information.
 - Appearance snapshot
 - Incident accessories
 - Date/time validation
-- Exact/approximate location
+- Missing location at suburb or street/public-landmark-name level; private coordinates and house numbers never appear in public views or map pins
 - Urgency and approach warnings
 - Contact visibility
 - Draft save/recovery

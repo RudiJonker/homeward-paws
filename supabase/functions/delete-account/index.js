@@ -5,6 +5,44 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type'
 };
 
+async function removeUserStorage(service, bucket, userId) {
+  const storage = service.storage.from(bucket);
+  const root = userId;
+  const folders = [root];
+  const paths = [];
+
+  while (folders.length) {
+    const folder = folders.pop();
+    let offset = 0;
+    const limit = 1000;
+    while (true) {
+      const { data, error } = await storage.list(folder, {
+        limit,
+        offset,
+        sortBy: { column: 'name', order: 'asc' }
+      });
+      if (error) throw new Error(`Could not list ${bucket} files: ${error.message}`);
+      for (const entry of data ?? []) {
+        if (!entry.name || entry.name === '.' || entry.name === '..' || entry.name.includes('/')) {
+          throw new Error(`Unexpected ${bucket} file name`);
+        }
+        const path = `${folder}/${entry.name}`;
+        if (!path.startsWith(`${root}/`)) throw new Error(`Unexpected ${bucket} file path`);
+        if (entry.id === null) folders.push(path);
+        else if (entry.id) paths.push(path);
+        else throw new Error(`Unknown ${bucket} file entry`);
+      }
+      if ((data ?? []).length < limit) break;
+      offset += limit;
+    }
+  }
+
+  for (let index = 0; index < paths.length; index += 1000) {
+    const { error } = await storage.remove(paths.slice(index, index + 1000));
+    if (error) throw new Error(`Could not remove ${bucket} files: ${error.message}`);
+  }
+}
+
 Deno.serve(async (request) => {
   if (request.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
@@ -46,21 +84,12 @@ Deno.serve(async (request) => {
     auth: { autoRefreshToken: false, persistSession: false }
   });
 
-  const { data: avatarObjects, error: avatarListError } = await service.storage
-    .from('avatars')
-    .list(user.id, { limit: 1000 });
-  if (avatarListError) {
-    console.error('Avatar listing failed', avatarListError.message);
-    return Response.json({ error: 'Unable to delete account files' }, { status: 500, headers: corsHeaders });
-  }
-
-  const avatarPaths = (avatarObjects ?? []).map((object) => `${user.id}/${object.name}`);
-  if (avatarPaths.length > 0) {
-    const { error: avatarDeleteError } = await service.storage.from('avatars').remove(avatarPaths);
-    if (avatarDeleteError) {
-      console.error('Avatar deletion failed', avatarDeleteError.message);
-      return Response.json({ error: 'Unable to delete account files' }, { status: 500, headers: corsHeaders });
-    }
+  try {
+    await removeUserStorage(service, 'avatars', user.id);
+    await removeUserStorage(service, 'animal-photos', user.id);
+  } catch (storageError) {
+    console.error('Account file deletion failed', storageError.message);
+    return Response.json({ error: 'Unable to delete account files. Please try again or contact support.' }, { status: 500, headers: corsHeaders });
   }
 
   const { error: dataError } = await service.rpc('delete_member_data', { target_user_id: user.id });

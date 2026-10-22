@@ -46,10 +46,14 @@ export default {
       ],
       ['expo-location', { locationWhenInUsePermission: 'Allow Homeward Paws to suggest your area. Your location remains private.' }],
       ['expo-image-picker', { photosPermission: false, cameraPermission: 'Allow Homeward Paws to take a profile photo.' }],
+      '@react-native-community/datetimepicker',
       'expo-web-browser'
     ],
     extra: {
-      appVariant: IS_PRODUCTION ? 'production' : 'development'
+      appVariant: IS_PRODUCTION ? 'production' : 'development',
+      eas: {
+        projectId: '79c0d630-d9b2-4d93-9388-e8b576988a5d'
+      }
     }
   }
 };

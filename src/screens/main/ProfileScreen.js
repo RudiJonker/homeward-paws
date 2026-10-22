@@ -10,8 +10,8 @@ import { colors, spacing, typography } from '../../theme';
 export function ProfileScreen({ navigation }) {
   const { profile, privateProfile } = useSession();
   const items = [
-    ['paw-outline', 'My Animals', null, 'Checkpoint 2'],
-    ['file-document-outline', 'My Reports', null, 'Checkpoint 3'],
+    ['paw-outline', 'My Animals', 'MyAnimals'],
+    ['file-document-outline', 'My Reports', 'MyReports'],
     ['eye-outline', 'My Sightings', null, 'Checkpoint 4'],
     ['account-edit-outline', 'Edit profile', 'EditProfile'],
     ['shield-lock-outline', 'Privacy and contact', 'PrivacyContact'],

@@ -1,11 +1,12 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { colors, radii, shadows, spacing, typography } from '../theme';
 
-export function PlaceholderCard({ icon, title, body, tint = colors.primaryLight, color = colors.primary }) {
+export function PlaceholderCard({ icon, title, body, tint = colors.primaryLight, color = colors.primary, onPress }) {
+  const Container = onPress ? Pressable : View;
   return (
-    <View style={styles.card}>
+    <Container accessibilityRole={onPress ? 'button' : undefined} onPress={onPress} style={styles.card}>
       <View style={[styles.iconTile, { backgroundColor: tint }]}>
         <MaterialCommunityIcons name={icon} size={26} color={color} />
       </View>
@@ -13,7 +14,7 @@ export function PlaceholderCard({ icon, title, body, tint = colors.primaryLight,
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.body}>{body}</Text>
       </View>
-    </View>
+    </Container>
   );
 }
 

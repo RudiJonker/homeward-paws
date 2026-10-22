@@ -1,49 +1,46 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { Linking } from 'react-native';
 
 import { supabase } from '../services/supabase';
 
 const SessionContext = createContext(null);
-
-async function applyAuthUrl(url) {
-  if (!supabase || !url) return;
-  const parsed = new URL(url);
-  const code = parsed.searchParams.get('code');
-  if (code) {
-    await supabase.auth.exchangeCodeForSession(code);
-    return;
-  }
-
-  const hash = new URLSearchParams(parsed.hash.replace(/^#/, ''));
-  const accessToken = hash.get('access_token');
-  const refreshToken = hash.get('refresh_token');
-  if (accessToken && refreshToken) {
-    await supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken });
-  }
-}
+const PENDING_EMAIL_KEY = 'homeward-paws:pending-email';
 
 export function SessionProvider({ children }) {
   const [session, setSession] = useState(null);
   const [profile, setProfile] = useState(null);
   const [privateProfile, setPrivateProfile] = useState(null);
   const [loading, setLoading] = useState(Boolean(supabase));
+  const [pendingEmail, setPendingEmailState] = useState(null);
+  const [recoveryEmail, setRecoveryEmail] = useState(null);
+  const [recoveryFlow, setRecoveryFlow] = useState(false);
 
-  const refreshProfile = useCallback(async (userId = session?.user?.id) => {
-    if (!supabase || !userId) {
+  const setPendingEmail = useCallback(async (email) => {
+    const normalized = email?.trim().toLowerCase() || null;
+    setPendingEmailState(normalized);
+    try {
+      if (normalized) await AsyncStorage.setItem(PENDING_EMAIL_KEY, normalized);
+      else await AsyncStorage.removeItem(PENDING_EMAIL_KEY);
+    } catch { /* Keep the current flow usable even if local storage fails. */ }
+  }, []);
+
+  const refreshProfile = useCallback(async (userId) => {
+    const targetUserId = userId || (await supabase?.auth.getSession())?.data?.session?.user?.id;
+    if (!supabase || !targetUserId) {
       setProfile(null);
       setPrivateProfile(null);
       return;
     }
 
     const [{ data: profileData, error: profileError }, { data: privateData, error: privateError }] = await Promise.all([
-      supabase.from('profiles').select('*').eq('id', userId).single(),
-      supabase.from('profile_private').select('*').eq('user_id', userId).single()
+      supabase.from('profiles').select('*').eq('id', targetUserId).single(),
+      supabase.from('profile_private').select('*').eq('user_id', targetUserId).single()
     ]);
     if (profileError) throw profileError;
     if (privateError) throw privateError;
     setProfile(profileData);
     setPrivateProfile(privateData);
-  }, [session?.user?.id]);
+  }, []);
 
   useEffect(() => {
     let mounted = true;
@@ -51,36 +48,40 @@ export function SessionProvider({ children }) {
       return undefined;
     }
 
-    supabase.auth.getSession().then(async ({ data }) => {
+    Promise.all([supabase.auth.getSession(), AsyncStorage.getItem(PENDING_EMAIL_KEY)]).then(async ([{ data }, savedEmail]) => {
       if (!mounted) return;
       setSession(data.session);
+      setPendingEmailState(data.session ? null : savedEmail);
+      if (data.session && savedEmail) setPendingEmail(null).catch(() => {});
       if (data.session) {
         try { await refreshProfile(data.session.user.id); } catch { /* handled by screens */ }
       }
       if (mounted) setLoading(false);
-    });
+    }).catch(() => { if (mounted) setLoading(false); });
 
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+    const { data: listener } = supabase.auth.onAuthStateChange((event, nextSession) => {
       setSession(nextSession);
       if (!nextSession) {
         setProfile(null);
         setPrivateProfile(null);
+        setRecoveryFlow(false);
+        setRecoveryEmail(null);
+        if (event === 'SIGNED_OUT') setPendingEmail(null).catch(() => {});
       } else {
         setTimeout(() => refreshProfile(nextSession.user.id).catch(() => {}), 0);
       }
     });
 
-    Linking.getInitialURL().then(applyAuthUrl);
-    const linkSubscription = Linking.addEventListener('url', ({ url }) => applyAuthUrl(url));
-
     return () => {
       mounted = false;
       listener.subscription.unsubscribe();
-      linkSubscription.remove();
     };
-  }, [refreshProfile]);
+  }, [refreshProfile, setPendingEmail]);
 
-  const value = useMemo(() => ({ session, profile, privateProfile, loading, refreshProfile }), [session, profile, privateProfile, loading, refreshProfile]);
+  const value = useMemo(() => ({
+    session, profile, privateProfile, loading, refreshProfile, pendingEmail, setPendingEmail,
+    recoveryEmail, setRecoveryEmail, recoveryFlow, setRecoveryFlow
+  }), [session, profile, privateProfile, loading, refreshProfile, pendingEmail, setPendingEmail, recoveryEmail, recoveryFlow]);
   return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;
 }
 

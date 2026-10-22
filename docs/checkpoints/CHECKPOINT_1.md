@@ -20,4 +20,10 @@ Email verification and password recovery are temporarily inactive during develop
 - Google sign-in
 - Configure production SMTP, enable confirmation, activate the prepared OTP email template and restore Forgot Password
 
-These items are not yet implemented.
+Google sign-in remains deferred. The email items were subsequently restored as noted below.
+
+## Completed later — Auth email restoration (22 October 2026)
+
+- Digitack custom SMTP, Supabase URL configuration, 100-email/hour rate limit, six-digit OTP, and the Confirm signup and Reset password templates were configured manually by Rudi. Andre uploaded and checked the website bridge and public `auth-config.js`; the email-logo URL is reachable. Confirm email remains **off** until the app build is installed.
+- On `feature/auth-email`, restored persistent pending-email verification, six-digit code and resend cooldown, the Forgot Password entry point, code and link-based recovery, a protected reset screen, and shared friendly Auth errors. Added an `AuthCallback` route for the custom scheme, with HTTPS parsing prepared for the later verified App Links phase.
+- A development build was installed on the connected Android phone. Existing signed-in Home loaded, and an incomplete auth deep link opened the callback error screen without crashing. Real confirmation and recovery emails, cold/warm valid links, code entry, resend and restart persistence still need the joint end-to-end test; no Supabase dashboard setting was changed by the app work.

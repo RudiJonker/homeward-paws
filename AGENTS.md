@@ -13,6 +13,7 @@ Homeward Paws is a free, Android-first community app for South Africa that helps
 3. `docs/05_DEVELOPMENT_ROADMAP.md` — the active checkpoint and its exit gate
 4. The detailed spec for the task: flows `01`, screens `02`, data and RLS `03`, design `04`, testing `06`
 5. `docs/07_BRAND_AND_ASSETS.md` before UI work; `docs/08_LEGAL_AND_PLAY_COMPLIANCE.md` before permissions, accounts, reporting, ads or legal screens
+6. `docs/09_AUTH_EMAIL_AND_DEEP_LINKS.md` before authentication email, recovery or deep-link work
 
 If documents conflict, follow the source-of-truth order in Blueprint §19. Report conflicts; never reinterpret silently.
 

@@ -8,10 +8,13 @@ import { ScreenContainer } from '../../components/ScreenContainer';
 import { PRIVACY_VERSION, TERMS_VERSION } from '../../config/constants';
 import { links } from '../../config/links';
 import { supabase } from '../../services/supabase';
+import { useSession } from '../../context/SessionContext';
+import { AUTH_REDIRECT_URL, authEmailError } from '../../utils/authEmail';
 import { isValidEmail } from '../../utils/validation';
 import { authStyles as styles } from './authStyles';
 
 export function SignUpScreen({ navigation }) {
+  const { setPendingEmail } = useSession();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -27,18 +30,26 @@ export function SignUpScreen({ navigation }) {
     if (password !== confirmPassword) return setMessage('Passwords do not match.');
     if (!ageConfirmed || !accepted) return setMessage('Confirm your age and accept the Terms and Privacy Policy.');
     setBusy(true); setMessage('');
-    const { data, error } = await supabase.auth.signUp({
-      email: normalizedEmail, password,
-      options: {
-        data: { age_confirmed: true, terms_version: TERMS_VERSION, privacy_version: PRIVACY_VERSION }
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email: normalizedEmail, password,
+        options: {
+          data: { age_confirmed: true, terms_version: TERMS_VERSION, privacy_version: PRIVACY_VERSION },
+          emailRedirectTo: AUTH_REDIRECT_URL
+        }
+      });
+      if (error) return setMessage(authEmailError(error));
+      if (!data.session) {
+        await setPendingEmail(normalizedEmail);
+        navigation.navigate('EmailVerification', { email: normalizedEmail });
+      } else {
+        await setPendingEmail(null);
       }
-    });
-    setBusy(false);
-    if (error) return setMessage(error.message);
-    // Development projects may temporarily have email confirmation disabled.
-    // When production SMTP is configured, an unconfirmed signup has no session
-    // and continues through the prepared in-app verification-code screen.
-    if (!data.session) navigation.navigate('EmailVerification', { email: normalizedEmail });
+    } catch (error) {
+      setMessage(authEmailError(error));
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (

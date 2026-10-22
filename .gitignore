@@ -2,6 +2,7 @@ node_modules/
 .expo/
 .expo-check-last-seen/
 supabase/.temp/
+supabase/.branches/
 dist/
 web-build/
 android/

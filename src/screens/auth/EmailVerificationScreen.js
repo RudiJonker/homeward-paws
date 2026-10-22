@@ -63,7 +63,7 @@ export function EmailVerificationScreen({ navigation, route }) {
   return (
     <ScreenContainer>
       <Text style={styles.title}>Verify your email</Text>
-      <Text style={styles.subtitle}>Open the email on this phone and tap the button, or type the 6-digit code sent to {email || 'your email address'}.</Text>
+      <Text style={styles.subtitle}>Enter the 6-digit code emailed to {email || 'your email address'}. The resend countdown does not expire your code.</Text>
       <View style={styles.form}>
         <FormField
           label="Verification code"
@@ -77,7 +77,7 @@ export function EmailVerificationScreen({ navigation, route }) {
         />
         {message ? <Text style={messageType === 'success' ? styles.success : styles.error}>{message}</Text> : null}
         <PrimaryButton label={busy ? 'Verifying…' : 'Verify email'} onPress={busy || resending ? undefined : verify} />
-        <Pressable disabled={busy || resending || seconds > 0} onPress={resend}><Text style={styles.link}>{resending ? 'Sending a new code…' : seconds > 0 ? `Send a new code in ${seconds}s` : 'Send a new code'}</Text></Pressable>
+        <Pressable disabled={busy || resending || seconds > 0} onPress={resend}><Text style={styles.link}>{resending ? 'Sending a new code…' : seconds > 0 ? `Resend available in ${seconds}s` : 'Send a new code'}</Text></Pressable>
         <Pressable disabled={busy || resending} onPress={useDifferentEmail}><Text style={styles.link}>Use a different email</Text></Pressable>
         <Pressable disabled={busy || resending} onPress={() => navigation.navigate('Login')}><Text style={styles.link}>Back to login</Text></Pressable>
       </View>

@@ -63,7 +63,7 @@ export function ForgotPasswordScreen() {
   return (
     <ScreenContainer>
       <Text style={styles.title}>Reset your password</Text>
-      <Text style={styles.subtitle}>Enter your email address. You can use the email button on your phone or type its 6-digit code here.</Text>
+      <Text style={styles.subtitle}>Enter your email address. We will send a 6-digit code you can enter here to choose a new password.</Text>
       <View style={styles.form}>
         <FormField label="Email address" value={email} onChangeText={(value) => { setEmail(value); setSent(false); setCode(''); setMessage(''); }} keyboardType="email-address" autoCapitalize="none" autoComplete="email" />
         {message ? <Text style={styles.success}>{message}</Text> : null}

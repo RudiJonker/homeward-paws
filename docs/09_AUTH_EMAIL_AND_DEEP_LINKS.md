@@ -4,31 +4,31 @@ Specification for email verification, password recovery and links back into the 
 
 ## 0. Website address
 
-The Homeward Paws website currently lives at **`https://digitack.co.za/paws/`** (temporary). All email links, the bridge page and the app's website links use that base. When the site moves to its own domain, change the two templates, Supabase Site URL and Redirect URLs, `EXPO_PUBLIC_WEBSITE_URL`, and the App Links host (§7).
+The Homeward Paws website currently lives at **`https://digitack.co.za/paws/`** (temporary). The email templates' logo and legal links, the legacy bridge page and the app's website links use that base. When the site moves to its own domain, change the two templates, Supabase Site URL and Redirect URLs, `EXPO_PUBLIC_WEBSITE_URL`, and the App Links host (§7).
 
 ## 1. Principles
 
-- Email links must survive link scanners and being opened on a different device than the one that signed up.
-- Every email offers two ways to finish: a button and a 6-digit code.
+- Signup confirmation and password recovery emails both use a 6-digit code entered in the app; neither email offers a button.
+- Keep legacy email-link handling for links already sent. New signup and recovery emails do not depend on a browser or device deep link.
 - The website page never verifies anything on page load. Verification happens only after a person taps a button.
 - The app never reveals whether an email address has an account; password reset shows the same message.
 - Auth email comes from `noreply@digitack.co.za` through `smtp.digitack.co.za:465`. People are told to write to `info@digitack.co.za`.
 
 ## 2. Email content
 
-| Email | Button link | Code | `verifyOtp` type |
-|---|---|---|---|
-| Confirm signup | `https://digitack.co.za/paws/auth/confirm.html?token_hash={{ .TokenHash }}&type=email` | `{{ .Token }}` | `email` |
-| Reset password | `https://digitack.co.za/paws/auth/confirm.html?token_hash={{ .TokenHash }}&type=recovery` | `{{ .Token }}` | `recovery` |
+| Email | Code | `verifyOtp` type |
+|---|---|---|
+| Confirm signup | `{{ .Token }}` | `email` |
+| Reset password | `{{ .Token }}` | `recovery` |
 
-Templates live in `supabase/email-templates/`. Links and codes expire after 1 hour (Supabase Email OTP expiration 3600 s).
+Templates live in `supabase/email-templates/`. Codes expire after 1 hour (Supabase Email OTP expiration 3600 s).
 
-## 3. Website bridge page (`/paws/auth/confirm.html`)
+## 3. Website bridge page (`/paws/auth/confirm.html`, legacy links)
 
 - Reads `token_hash` and `type` from the query string. Accepts `email` and `recovery` only.
 - Primary action: **Open Homeward Paws**, a link to `homewardpaws://auth/confirm?token_hash=…&type=…`.
-- For `email` only, secondary action: **Confirm on this computer**. Calls `supabase.auth.verifyOtp({ token_hash, type: 'email' })` in the browser, shows that the email is confirmed and tells the member to log in on their phone, then signs the browser session out.
-- For `recovery`, explains that the password must be reset in the app: open the email on the phone with the app, or type the 6-digit code in the app.
+- For `email` links sent before the code-only template, secondary action: **Confirm on this computer**. Calls `supabase.auth.verifyOtp({ token_hash, type: 'email' })` in the browser, shows that the email is confirmed and tells the member to log in on their phone, then signs the browser session out.
+- For a recovery link from an older email, explains that the password must be reset in the app. New recovery emails contain only a 6-digit code.
 - Missing or invalid parameters show a clear error with a link to Help.
 - Uses the website's styles and self-hosted supabase-js. No analytics.
 
@@ -56,7 +56,7 @@ The link must be handled when the app is cold-started or already open. Tokens ar
 
 ### 1.4 Email Verification
 
-- Shows the pending address, an instruction to open the email on the phone or type its code, a 6-digit code field, **Resend email** with a 60-second countdown, and **Use a different email**.
+- Shows the pending address, an instruction to type the emailed code, a 6-digit code field, **Resend email** with a 60-second countdown, and **Use a different email**. The countdown controls only resend availability, not code expiry.
 - No "Open email app" button: `mailto:` composes a message and does not open the inbox. This resolves the conflict in the initial dev-pack draft.
 - Code entry: `verifyOtp({ email: pendingEmail, token: code, type: 'email' })`.
 - Resend: `resend({ type: 'signup', email: pendingEmail })`.
@@ -65,6 +65,7 @@ The link must be handled when the app is cold-started or already open. Tokens ar
 
 ### 1.6 Forgot Password
 
+- The reset email instructs the member to enter its six-digit code here; it does not offer a button. Keep the recovery-link route for emails sent before this change.
 - Email field → `resetPasswordForEmail(email, { redirectTo: 'homewardpaws://auth/confirm' })`.
 - Always show: "If there is an account for this address, we have sent a reset email." Then show a 6-digit code field and **Resend** with a 60-second countdown.
 - Code entry: `verifyOtp({ email, token: code, type: 'recovery' })` → 1.7.

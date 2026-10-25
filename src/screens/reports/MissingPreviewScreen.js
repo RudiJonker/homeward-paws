@@ -218,7 +218,9 @@ export function MissingPreviewScreen({ navigation, route }) {
       >
         <Text style={styles.publishLabel}>{publishing ? 'Copying photos and publishing…' : 'Publish missing report'}</Text>
       </Pressable>
-      <Text style={styles.footer}>Publishing is being connected to a safe in-app response route and the live server. Your report remains a private draft for now.</Text>
+      <Text style={styles.footer}>{MISSING_PUBLICATION_ENABLED
+        ? 'For this test build, publishing makes the report visible to everyone using Homeward Paws. Check every detail before continuing.'
+        : 'Publishing is being connected to a safe in-app response route and the live server. Your report remains a private draft for now.'}</Text>
       <Pressable accessibilityRole="button" disabled={publishing} onPress={() => navigation.popTo('ReportMenu')} style={styles.textButton}><Text style={styles.link}>Back to Report</Text></Pressable>
     </ScreenContainer>
   );

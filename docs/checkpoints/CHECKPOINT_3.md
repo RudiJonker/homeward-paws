@@ -3,6 +3,7 @@
 ## Progress
 
 - On 25 October, the CLI login was corrected to the Homeward Paws owner account. `npx supabase migration list --linked` confirmed that local and remote histories match through migration 014. `npx supabase db push --linked --dry-run` listed only migrations 015–024, in order. This was a read-only preflight; the live database and Edge Function were not changed by it.
+- After that preflight, Rudi authorised the production backend deployment. `npx supabase db push --linked` applied migrations 015–024; a second migration list showed all 24 local and remote versions matched. The repository `delete-account` Edge Function was deployed to project `krpihktxtivossbfuziq` and listed as active version 5. Read-only live queries confirmed RLS on `missing_case_sightings`, `missing_closures`, `missing_reunions` and `content_reports`, and confirmed `report-photos` and `sighting-photos` are private buckets. The app's Checkpoint 3 feature switches remain off; live Android publication, linked-sighting, photo and account-deletion flows still require testing before enablement.
 
 - Checkpoint 2 preview APK is available for independent device testing; its build link is recorded in `CHECKPOINT_2.md`.
 - Added the first missing-workflow migration, `202610220012_missing_draft_foundation.sql`. Reports begin as private drafts in the shared `reports` table. One unfinished missing draft is allowed per animal, and a separate index will prevent duplicate active missing reports.

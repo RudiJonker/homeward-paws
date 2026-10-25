@@ -33,7 +33,7 @@ export function MissingAppearanceScreen({ navigation, route }) {
     setError('');
     try {
       const [animalRow, draftRow] = await Promise.all([getAnimalReportAppearance(animalId), getMissingDraft(reportId)]);
-      if (draftRow.animal_id !== animalId || animalRow.status !== 'safe') {
+      if (draftRow.animal_id !== animalId || !['safe', 'missing'].includes(animalRow.status)) {
         throw new Error('This animal is no longer available for a missing draft.');
       }
       const appearance = draftRow.draft_payload?.appearance ?? {};

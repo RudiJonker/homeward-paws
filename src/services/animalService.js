@@ -118,10 +118,12 @@ export async function reorderAnimalPhotos(animalId, photoIds) {
   if (error) throw error;
 }
 
-export async function listMyAnimals({ archived = false, limit = null } = {}) {
+export async function listMyAnimals({ archived = false, limit = null, ownerId } = {}) {
+  if (!ownerId) throw new Error('Sign in to see your animals.');
   const baseQuery = supabase
     .from('animals')
     .select('id, name, category, breed, sex, size, status, updated_at, animal_photos(storage_path, display_order, archived_at)')
+    .eq('owner_id', ownerId)
     .order('updated_at', { ascending: false });
   const query = Number.isInteger(limit) && limit > 0 ? baseQuery.limit(limit) : baseQuery;
 
@@ -178,7 +180,12 @@ export async function getAnimalReportAppearance(animalId) {
       const { data: signed, error: signedError } = await supabase.storage
         .from('animal-photos')
         .createSignedUrl(photo.storage_path, 3600);
-      return { id: photo.id, url: signedError ? null : signed.signedUrl, visibility: photo.visibility };
+      return {
+        id: photo.id,
+        storagePath: photo.storage_path,
+        url: signedError ? null : signed.signedUrl,
+        visibility: photo.visibility
+      };
     }));
   return { ...data, photos };
 }

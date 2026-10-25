@@ -93,6 +93,7 @@ Use test-only animals and contact information.
 - Open detail
 - Follow/share
 - Submit linked sighting
+- Contributor removes an attached sighting photo after submission or case closure; the sighting and owner review remain, while owner and other member cannot delete the photo
 - Cannot edit owner's report
 
 ### Resolution

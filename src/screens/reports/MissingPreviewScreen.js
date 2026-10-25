@@ -6,9 +6,10 @@ import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { ScreenContainer } from '../../components/ScreenContainer';
 import { ANIMAL_PLACEHOLDERS, animalCategoryLabel } from '../../config/animals';
+import { MISSING_PUBLICATION_ENABLED } from '../../config/checkpoint3';
 import { useSession } from '../../context/SessionContext';
 import { getAnimalReportAppearance } from '../../services/animalService';
-import { getMissingDraft, getMissingDraftReadiness } from '../../services/missingReportService';
+import { getMissingDraft, getMissingDraftReadiness, publishMissingReport, stageMissingReportPhotos } from '../../services/missingReportService';
 import { colors, radii, shadows, spacing, typography } from '../../theme';
 import { buildMissingPublicPreview, missingReviewIssues, missingReviewStatus, selectedMissingPhotos } from '../../utils/missingPreview';
 
@@ -36,7 +37,7 @@ function Detail({ label, value }) {
 
 export function MissingPreviewScreen({ navigation, route }) {
   const { animalId, reportId } = route.params;
-  const { profile, privateProfile } = useSession();
+  const { profile, privateProfile, session } = useSession();
   const [animal, setAnimal] = useState(null);
   const [draft, setDraft] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -44,7 +45,10 @@ export function MissingPreviewScreen({ navigation, route }) {
   const [readinessIssues, setReadinessIssues] = useState(null);
   const [readinessError, setReadinessError] = useState('');
   const [confirmed, setConfirmed] = useState([false, false, false]);
+  const [publishing, setPublishing] = useState(false);
+  const [publishError, setPublishError] = useState('');
   const requestSequence = useRef(0);
+  const publishingRef = useRef(false);
 
   const load = useCallback(async () => {
     const sequence = ++requestSequence.current;
@@ -52,6 +56,7 @@ export function MissingPreviewScreen({ navigation, route }) {
     setError('');
     setReadinessIssues(null);
     setReadinessError('');
+    setPublishError('');
     try {
       const [animalRow, draftRow] = await Promise.all([getAnimalReportAppearance(animalId), getMissingDraft(reportId)]);
       if (sequence !== requestSequence.current) return;
@@ -81,6 +86,37 @@ export function MissingPreviewScreen({ navigation, route }) {
     load();
     return () => { requestSequence.current += 1; };
   }, [load]));
+
+  async function publish() {
+    if (!MISSING_PUBLICATION_ENABLED || publishingRef.current || !animal || !draft || !session?.user?.id) return;
+    publishingRef.current = true;
+    setPublishing(true);
+    setPublishError('');
+    try {
+      const currentIssues = await getMissingDraftReadiness(reportId);
+      if (currentIssues.length) {
+        setReadinessIssues(currentIssues);
+        setConfirmed([false, false, false]);
+        throw new Error('Some details changed. Review the steps shown above, then confirm again.');
+      }
+      await stageMissingReportPhotos({
+        animalId,
+        reportId,
+        userId: session.user.id,
+        photos: selectedMissingPhotos(animal, draft.draft_payload?.appearance)
+      });
+      const reference = await publishMissingReport(reportId);
+      navigation.reset({
+        index: 1,
+        routes: [{ name: 'ReportMenu' }, { name: 'MissingPublished', params: { reportId, reference } }]
+      });
+    } catch (publishFailure) {
+      setPublishError(`We could not confirm publication. Check Browse or My Reports before trying again. ${publishFailure.message}`);
+    } finally {
+      publishingRef.current = false;
+      setPublishing(false);
+    }
+  }
 
   if (loading) return <ScreenContainer><Text style={styles.message}>Preparing your private review…</Text></ScreenContainer>;
   if (!animal || !draft) return <ScreenContainer><View style={styles.state}><MaterialCommunityIcons name="cloud-alert-outline" size={48} color={colors.error} /><Text style={styles.error}>{error || 'This draft is unavailable.'}</Text><PrimaryButton label="Try again" onPress={load} /><Pressable accessibilityRole="button" onPress={() => navigation.goBack()} style={styles.textButton}><Text style={styles.link}>Back to safety and contact</Text></Pressable></View></ScreenContainer>;
@@ -170,10 +206,20 @@ export function MissingPreviewScreen({ navigation, route }) {
       ))}
       <View style={styles.statusCard}>
         <MaterialCommunityIcons name={reviewReady ? 'check-circle-outline' : 'information-outline'} size={24} color={reviewReady ? colors.primaryDark : colors.textSecondary} />
-        <Text style={styles.statusText}>{reviewReady ? 'Review complete. Your report is still a private draft.' : readinessError ? 'The server check must succeed before you can confirm this review.' : issues.length ? 'Recheck the steps above before confirming this review.' : 'Tick all three statements when the proposed public details look right.'}</Text>
+        <Text style={styles.statusText}>{reviewReady ? 'Review complete. Publishing will make this report visible to everyone.' : readinessError ? 'The server check must succeed before you can confirm this review.' : issues.length ? 'Recheck the steps above before confirming this review.' : 'Tick all three statements when the proposed public details look right.'}</Text>
       </View>
-      <Text style={styles.footer}>Publishing remains disabled until the server-side privacy rules, public report storage and final checks are ready. This review does not create a public report.</Text>
-      <Pressable accessibilityRole="button" onPress={() => navigation.popTo('ReportMenu')} style={styles.textButton}><Text style={styles.link}>Back to Report</Text></Pressable>
+      {publishError ? <Text accessibilityRole="alert" style={styles.error}>{publishError}</Text> : null}
+      <Pressable
+        accessibilityRole="button"
+        accessibilityState={{ disabled: !MISSING_PUBLICATION_ENABLED || !reviewReady || publishing, busy: publishing }}
+        disabled={!MISSING_PUBLICATION_ENABLED || !reviewReady || publishing}
+        onPress={publish}
+        style={[styles.publishButton, (!MISSING_PUBLICATION_ENABLED || !reviewReady || publishing) && styles.disabled]}
+      >
+        <Text style={styles.publishLabel}>{publishing ? 'Copying photos and publishing…' : 'Publish missing report'}</Text>
+      </Pressable>
+      <Text style={styles.footer}>Publishing is being connected to a safe in-app response route and the live server. Your report remains a private draft for now.</Text>
+      <Pressable accessibilityRole="button" disabled={publishing} onPress={() => navigation.popTo('ReportMenu')} style={styles.textButton}><Text style={styles.link}>Back to Report</Text></Pressable>
     </ScreenContainer>
   );
 }
@@ -207,5 +253,7 @@ const styles = StyleSheet.create({
   textButton: { minHeight: 48, justifyContent: 'center', alignItems: 'center', marginTop: spacing.md },
   link: { ...typography.bodyStrong, color: colors.primary },
   footer: { ...typography.caption, color: colors.textSecondary, textAlign: 'center', marginTop: spacing.xxl },
+  publishButton: { minHeight: 52, justifyContent: 'center', alignItems: 'center', marginTop: spacing.lg, paddingHorizontal: spacing.lg, borderRadius: radii.md, backgroundColor: colors.primary },
+  publishLabel: { ...typography.button, color: colors.textOnPrimary, textAlign: 'center' },
   disabled: { opacity: 0.55 }
 });

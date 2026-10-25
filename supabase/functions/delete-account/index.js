@@ -87,6 +87,19 @@ Deno.serve(async (request) => {
   try {
     await removeUserStorage(service, 'avatars', user.id);
     await removeUserStorage(service, 'animal-photos', user.id);
+    await removeUserStorage(service, 'report-photos', user.id);
+    await removeUserStorage(service, 'sighting-photos', user.id);
+    const { data: linkedPaths, error: linkedError } = await service.rpc(
+      'account_sighting_photo_paths', { target_user_id: user.id }
+    );
+    if (linkedError) throw new Error(`Could not list linked sighting photos: ${linkedError.message}`);
+    const otherPaths = [...new Set((linkedPaths ?? []).filter((path) =>
+      typeof path === 'string' && !path.startsWith(`${user.id}/`)))];
+    for (let index = 0; index < otherPaths.length; index += 1000) {
+      const { error } = await service.storage.from('sighting-photos')
+        .remove(otherPaths.slice(index, index + 1000));
+      if (error) throw new Error(`Could not remove linked sighting photos: ${error.message}`);
+    }
   } catch (storageError) {
     console.error('Account file deletion failed', storageError.message);
     return Response.json({ error: 'Unable to delete account files. Please try again or contact support.' }, { status: 500, headers: corsHeaders });

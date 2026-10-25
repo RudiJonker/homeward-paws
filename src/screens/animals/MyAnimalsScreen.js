@@ -6,6 +6,8 @@ import { useFocusEffect } from '@react-navigation/native';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { ScreenContainer } from '../../components/ScreenContainer';
 import { ANIMAL_PLACEHOLDERS, animalCategoryLabel } from '../../config/animals';
+import { animalStatusAppearance } from '../../config/animalStatus';
+import { useSession } from '../../context/SessionContext';
 import { listMyAnimals } from '../../services/animalService';
 import { colors, radii, shadows, spacing, typography } from '../../theme';
 
@@ -13,16 +15,18 @@ const emptyIllustration = require('../../../assets/illustrations/no-animals.png'
 
 export function MyAnimalsScreen({ navigation, route }) {
   const archived = route.params?.archived === true;
+  const { session } = useSession();
+  const ownerId = session?.user?.id;
   const [animals, setAnimals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   const load = useCallback(async () => {
     setLoading(true); setError('');
-    try { setAnimals(await listMyAnimals({ archived })); }
+    try { setAnimals(await listMyAnimals({ archived, ownerId })); }
     catch (loadError) { setError(`We couldn't load your animals. ${loadError.message}`); }
     finally { setLoading(false); }
-  }, [archived]);
+  }, [archived, ownerId]);
 
   useFocusEffect(useCallback(() => { load(); }, [load]));
 
@@ -33,7 +37,10 @@ export function MyAnimalsScreen({ navigation, route }) {
       {loading ? <Text style={styles.message}>Loading your animals…</Text> : null}
       {!loading && error ? <View style={styles.state}><MaterialCommunityIcons name="cloud-alert-outline" size={48} color={colors.error} /><Text style={styles.error}>{error}</Text><PrimaryButton label="Try again" onPress={load} /></View> : null}
       {!loading && !error && animals.length === 0 ? <View style={styles.state}><Image source={emptyIllustration} style={styles.emptyImage} resizeMode="contain" /><Text style={styles.stateTitle}>{archived ? 'No archived animals' : 'No animals registered yet'}</Text><Text style={styles.message}>{archived ? 'Profiles you archive will appear here.' : 'Add an animal profile now so important details and photographs are ready when needed.'}</Text></View> : null}
-      {!loading && !error ? <View style={styles.list}>{animals.map((animal) => <Pressable key={animal.id} onPress={() => navigation.navigate('AnimalDetail', { animalId: animal.id })} style={styles.card}><Image source={animal.photoUrl ? { uri: animal.photoUrl } : ANIMAL_PLACEHOLDERS[animal.category]} style={styles.photo} /><View style={styles.cardBody}><Text style={styles.name}>{animal.name}</Text><Text style={styles.meta}>{[animalCategoryLabel(animal.category), animal.breed].filter(Boolean).join(' · ')}</Text><View style={styles.status}><MaterialCommunityIcons name={archived ? 'archive-outline' : 'home-heart'} size={16} color={colors.reunitedOnTint} /><Text style={styles.statusText}>{archived ? 'ARCHIVED' : 'SAFE'}</Text></View></View><MaterialCommunityIcons name="chevron-right" size={24} color={colors.textSecondary} /></Pressable>)}</View> : null}
+      {!loading && !error ? <View style={styles.list}>{animals.map((animal) => {
+        const status = animalStatusAppearance(animal.status);
+        return <Pressable key={animal.id} onPress={() => navigation.navigate('AnimalDetail', { animalId: animal.id })} style={styles.card}><Image source={animal.photoUrl ? { uri: animal.photoUrl } : ANIMAL_PLACEHOLDERS[animal.category]} style={styles.photo} /><View style={styles.cardBody}><Text style={styles.name}>{animal.name}</Text><Text style={styles.meta}>{[animalCategoryLabel(animal.category), animal.breed].filter(Boolean).join(' · ')}</Text><View style={[styles.status, { backgroundColor: status.tint }]}><MaterialCommunityIcons name={status.icon} size={16} color={status.ink} /><Text style={[styles.statusText, { color: status.ink }]}>{status.label}</Text></View></View><MaterialCommunityIcons name="chevron-right" size={24} color={colors.textSecondary} /></Pressable>;
+      })}</View> : null}
       {!loading && !error ? <View style={styles.action}>{archived ? null : <PrimaryButton label="Add animal" onPress={() => navigation.navigate('RegisterAnimal')} />}<Pressable onPress={() => navigation.navigate(archived ? 'MyAnimals' : 'ArchivedAnimals')} style={styles.archiveLink}><MaterialCommunityIcons name={archived ? 'paw-outline' : 'archive-outline'} size={20} color={colors.primary} /><Text style={styles.archiveLinkText}>{archived ? 'Back to active animals' : 'View archived animals'}</Text></Pressable></View> : null}
     </ScreenContainer>
   );
@@ -53,8 +60,8 @@ const styles = StyleSheet.create({
   cardBody: { flex: 1, gap: spacing.xs },
   name: { ...typography.sectionTitle, color: colors.textPrimary },
   meta: { ...typography.body, color: colors.textSecondary },
-  status: { alignSelf: 'flex-start', flexDirection: 'row', alignItems: 'center', gap: spacing.xs, paddingHorizontal: spacing.sm, paddingVertical: spacing.xs, borderRadius: radii.pill, backgroundColor: colors.reunitedTint },
-  statusText: { ...typography.caption, color: colors.reunitedOnTint },
+  status: { alignSelf: 'flex-start', flexDirection: 'row', alignItems: 'center', gap: spacing.xs, paddingHorizontal: spacing.sm, paddingVertical: spacing.xs, borderRadius: radii.pill },
+  statusText: { ...typography.caption },
   action: { gap: spacing.md, marginTop: spacing.xxl },
   archiveLink: { minHeight: 48, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.sm },
   archiveLinkText: { ...typography.button, color: colors.primary }

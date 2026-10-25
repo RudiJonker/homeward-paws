@@ -5,6 +5,8 @@ import { supabase } from '../services/supabase';
 
 const SessionContext = createContext(null);
 const PENDING_EMAIL_KEY = 'homeward-paws:pending-email';
+const PENDING_SIGHTING_KEY = 'homeward-paws:pending-sighting';
+const PENDING_CONTENT_REPORT_KEY = 'homeward-paws:pending-content-report';
 
 export function SessionProvider({ children }) {
   const [session, setSession] = useState(null);
@@ -12,6 +14,8 @@ export function SessionProvider({ children }) {
   const [privateProfile, setPrivateProfile] = useState(null);
   const [loading, setLoading] = useState(Boolean(supabase));
   const [pendingEmail, setPendingEmailState] = useState(null);
+  const [pendingSightingIntent, setPendingSightingIntentState] = useState(null);
+  const [pendingContentReportIntent, setPendingContentReportIntentState] = useState(null);
   const [recoveryEmail, setRecoveryEmail] = useState(null);
   const [recoveryFlow, setRecoveryFlow] = useState(false);
 
@@ -22,6 +26,32 @@ export function SessionProvider({ children }) {
       if (normalized) await AsyncStorage.setItem(PENDING_EMAIL_KEY, normalized);
       else await AsyncStorage.removeItem(PENDING_EMAIL_KEY);
     } catch { /* Keep the current flow usable even if local storage fails. */ }
+  }, []);
+
+  const setPendingSightingIntent = useCallback(async (intent) => {
+    const next = intent?.reportId ? {
+      reportId: intent.reportId,
+      animalName: intent.animalName || null,
+      lastSeenAt: intent.lastSeenAt || null
+    } : null;
+    setPendingSightingIntentState(next);
+    try {
+      if (next) await AsyncStorage.setItem(PENDING_SIGHTING_KEY, JSON.stringify(next));
+      else await AsyncStorage.removeItem(PENDING_SIGHTING_KEY);
+    } catch { /* The current session can still resume without persisted storage. */ }
+  }, []);
+
+  const setPendingContentReportIntent = useCallback(async (intent) => {
+    const next = intent?.reportId ? {
+      reportId: intent.reportId,
+      photoPath: intent.photoPath || null,
+      reference: intent.reference || null
+    } : null;
+    setPendingContentReportIntentState(next);
+    try {
+      if (next) await AsyncStorage.setItem(PENDING_CONTENT_REPORT_KEY, JSON.stringify(next));
+      else await AsyncStorage.removeItem(PENDING_CONTENT_REPORT_KEY);
+    } catch { /* The current session can still resume without persisted storage. */ }
   }, []);
 
   const refreshProfile = useCallback(async (userId) => {
@@ -48,10 +78,19 @@ export function SessionProvider({ children }) {
       return undefined;
     }
 
-    Promise.all([supabase.auth.getSession(), AsyncStorage.getItem(PENDING_EMAIL_KEY)]).then(async ([{ data }, savedEmail]) => {
+    Promise.all([
+      supabase.auth.getSession(), AsyncStorage.getItem(PENDING_EMAIL_KEY),
+      AsyncStorage.getItem(PENDING_SIGHTING_KEY), AsyncStorage.getItem(PENDING_CONTENT_REPORT_KEY)
+    ]).then(async ([{ data }, savedEmail, savedSighting, savedContentReport]) => {
       if (!mounted) return;
       setSession(data.session);
       setPendingEmailState(data.session ? null : savedEmail);
+      if (savedSighting) {
+        try { setPendingSightingIntentState(JSON.parse(savedSighting)); } catch { /* Ignore invalid local intent. */ }
+      }
+      if (savedContentReport) {
+        try { setPendingContentReportIntentState(JSON.parse(savedContentReport)); } catch { /* Ignore invalid local intent. */ }
+      }
       if (data.session && savedEmail) setPendingEmail(null).catch(() => {});
       if (data.session) {
         try { await refreshProfile(data.session.user.id); } catch { /* handled by screens */ }
@@ -80,8 +119,10 @@ export function SessionProvider({ children }) {
 
   const value = useMemo(() => ({
     session, profile, privateProfile, loading, refreshProfile, pendingEmail, setPendingEmail,
+    pendingSightingIntent, setPendingSightingIntent,
+    pendingContentReportIntent, setPendingContentReportIntent,
     recoveryEmail, setRecoveryEmail, recoveryFlow, setRecoveryFlow
-  }), [session, profile, privateProfile, loading, refreshProfile, pendingEmail, setPendingEmail, recoveryEmail, recoveryFlow]);
+  }), [session, profile, privateProfile, loading, refreshProfile, pendingEmail, setPendingEmail, pendingSightingIntent, setPendingSightingIntent, pendingContentReportIntent, setPendingContentReportIntent, recoveryEmail, recoveryFlow]);
   return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;
 }
 

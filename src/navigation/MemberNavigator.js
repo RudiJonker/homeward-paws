@@ -1,12 +1,15 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useEffect } from 'react';
 import { StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { BrowseScreen } from '../screens/main/BrowseScreen';
+import { MISSING_BROWSE_ENABLED } from '../config/checkpoint3';
 import { FollowingScreen } from '../screens/main/FollowingScreen';
 import { HomeScreen } from '../screens/main/HomeScreen';
 import { colors, typography } from '../theme';
+import { BrowseNavigator } from './BrowseNavigator';
+import { useSession } from '../context/SessionContext';
 import { routes } from './routes';
 import { ProfileNavigator } from './ProfileNavigator';
 import { ReportNavigator } from './ReportNavigator';
@@ -21,8 +24,27 @@ const icons = {
   [routes.profile]: 'account-outline'
 };
 
-export function MemberNavigator() {
+export function MemberNavigator({ navigation }) {
   const insets = useSafeAreaInsets();
+  const { pendingSightingIntent, setPendingSightingIntent, pendingContentReportIntent, setPendingContentReportIntent } = useSession();
+
+  useEffect(() => {
+    if (!MISSING_BROWSE_ENABLED || !pendingSightingIntent?.reportId) return;
+    navigation.navigate(routes.member, {
+      screen: routes.browse,
+      params: { screen: 'LinkedSighting', params: pendingSightingIntent }
+    });
+    setPendingSightingIntent(null).catch(() => {});
+  }, [navigation, pendingSightingIntent, setPendingSightingIntent]);
+
+  useEffect(() => {
+    if (!MISSING_BROWSE_ENABLED || !pendingContentReportIntent?.reportId) return;
+    navigation.navigate(routes.member, {
+      screen: routes.browse,
+      params: { screen: 'ReportMissingContent', params: pendingContentReportIntent }
+    });
+    setPendingContentReportIntent(null).catch(() => {});
+  }, [navigation, pendingContentReportIntent, setPendingContentReportIntent]);
 
   return (
     <Tab.Navigator
@@ -45,7 +67,7 @@ export function MemberNavigator() {
       })}
     >
       <Tab.Screen name={routes.home} component={HomeScreen} />
-      <Tab.Screen name={routes.browse} component={BrowseScreen} />
+      <Tab.Screen name={routes.browse} component={BrowseNavigator} />
       <Tab.Screen
         name={routes.report}
         component={ReportNavigator}

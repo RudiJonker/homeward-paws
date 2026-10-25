@@ -186,6 +186,7 @@ Registration sections 3.2–3.8 appear together on one scrollable screen. The me
 | 9.1 | Profile | 1 |
 | 9.2 | Edit Profile | 1 |
 | 9.3 | My Reports | 3 |
+| 9.3a | Sighting Photos (linked missing cases only) | 3 |
 | 9.4 | My Sightings | 4 |
 | 9.5 | Draft Reports | 3 |
 | 9.6 | Privacy and Contact | 1–4 |

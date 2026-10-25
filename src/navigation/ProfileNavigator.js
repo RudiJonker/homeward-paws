@@ -7,7 +7,13 @@ import { ProfileScreen } from '../screens/main/ProfileScreen';
 import { AboutScreen, HelpSafetyScreen, PrivacyContactScreen } from '../screens/profile/InformationScreens';
 import { CompleteProfileScreen } from '../screens/profile/CompleteProfileScreen';
 import { DeleteAccountScreen } from '../screens/profile/DeleteAccountScreen';
+import { AddMissingUpdateScreen } from '../screens/profile/AddMissingUpdateScreen';
+import { ConfirmMissingReunionScreen } from '../screens/profile/ConfirmMissingReunionScreen';
+import { CloseMissingReportScreen } from '../screens/profile/CloseMissingReportScreen';
 import { MyReportsScreen } from '../screens/profile/MyReportsScreen';
+import { ManageSightingPhotosScreen } from '../screens/profile/ManageSightingPhotosScreen';
+import { OwnerMissingSightingsScreen } from '../screens/profile/OwnerMissingSightingsScreen';
+import { OwnerMissingTimelineScreen } from '../screens/profile/OwnerMissingTimelineScreen';
 import { SetHomeAreaScreen } from '../screens/profile/SetHomeAreaScreen';
 import { colors } from '../theme';
 
@@ -19,6 +25,12 @@ export function ProfileNavigator() {
       <Stack.Screen name="ProfileHome" component={ProfileScreen} options={{ headerShown: false }} />
       <Stack.Screen name="MyAnimals" component={MyAnimalsScreen} options={{ title: 'My Animals' }} />
       <Stack.Screen name="MyReports" component={MyReportsScreen} options={{ title: 'My Reports' }} />
+      <Stack.Screen name="ManageSightingPhotos" component={ManageSightingPhotosScreen} options={{ title: 'Sighting photos' }} />
+      <Stack.Screen name="OwnerMissingTimeline" component={OwnerMissingTimelineScreen} options={{ title: 'Case timeline' }} />
+      <Stack.Screen name="AddMissingUpdate" component={AddMissingUpdateScreen} options={{ title: 'Add update' }} />
+      <Stack.Screen name="ConfirmMissingReunion" component={ConfirmMissingReunionScreen} options={{ title: 'Confirm reunion' }} />
+      <Stack.Screen name="CloseMissingReport" component={CloseMissingReportScreen} options={{ title: 'Close missing alert' }} />
+      <Stack.Screen name="OwnerMissingSightings" component={OwnerMissingSightingsScreen} options={{ title: 'Case sightings' }} />
       <Stack.Screen name="ArchivedAnimals" component={MyAnimalsScreen} initialParams={{ archived: true }} options={{ title: 'Archived Animals' }} />
       <Stack.Screen name="AnimalDetail" component={AnimalDetailScreen} options={{ title: 'Animal profile' }} />
       <Stack.Screen name="RegisterAnimal" component={RegisterAnimalScreen} options={{ title: 'Register an animal' }} />

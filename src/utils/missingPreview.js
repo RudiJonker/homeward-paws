@@ -25,7 +25,7 @@ export function missingReviewIssues({ animal, draft, privateProfile }) {
     && JSON.stringify(payload.appearance?.photo_ids ?? []) === JSON.stringify(photoIds);
   const issues = [];
 
-  if (!animal || animal.status !== 'safe' || payload.appearance?.confirmed !== true || !appearanceCurrent
+  if (!animal || !['safe', 'missing'].includes(animal.status) || payload.appearance?.confirmed !== true || !appearanceCurrent
     || (Array.isArray(selectedIds) && selectedIds.some((id) => !selectedPhotos.some((photo) => photo.id === id)))
     || selectedPhotos.some((photo) => !photo.url)) issues.push('appearance');
   if (payload.last_seen?.complete !== true || !validateMissingLastSeen(payload.last_seen ?? {}).valid) issues.push('last_seen');

@@ -6,6 +6,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { ScreenContainer } from '../../components/ScreenContainer';
 import { ANIMAL_PLACEHOLDERS, animalCategoryLabel, animalHealthFlagLabel } from '../../config/animals';
+import { animalStatusAppearance } from '../../config/animalStatus';
 import { animalColourLabel } from '../../config/animalColours';
 import { useSession } from '../../context/SessionContext';
 import { chooseAnimalPhoto, deleteAnimalProfile, getAnimalProfile, removeAnimalPhoto, reorderAnimalPhotos, replaceAnimalPhoto, setAnimalArchived, uploadAnimalPhoto } from '../../services/animalService';
@@ -115,6 +116,7 @@ export function AnimalDetailScreen({ navigation, route }) {
   if (!animal) return null;
 
   const privateDetails = animal.animal_private_details;
+  const status = animalStatusAppearance(animal.status);
   return <ScreenContainer>
     <View style={styles.photos}>
       {(animal.photos.length ? animal.photos : [{ id: 'placeholder', url: null }]).map((photo, index) => <View key={photo.id} style={styles.photoCard}>
@@ -132,7 +134,7 @@ export function AnimalDetailScreen({ navigation, route }) {
       </View>)}
     </View>
     {animal.photos.length > 0 && animal.status !== 'archived' ? <Text style={styles.photoHelp}>Photo controls: replace, remove, or change the display order.</Text> : null}
-    <View style={styles.heading}><View style={styles.headingText}><Text style={styles.title}>{animal.name}</Text><Text style={styles.message}>{animalCategoryLabel(animal.category)}{animal.breed ? ` · ${animal.breed}` : ''}</Text></View><View style={styles.status}><MaterialCommunityIcons name={animal.status === 'archived' ? 'archive-outline' : 'home-heart'} size={17} color={colors.reunitedOnTint} /><Text style={styles.statusText}>{animal.status === 'archived' ? 'ARCHIVED' : 'SAFE'}</Text></View></View>
+    <View style={styles.heading}><View style={styles.headingText}><Text style={styles.title}>{animal.name}</Text><Text style={styles.message}>{animalCategoryLabel(animal.category)}{animal.breed ? ` · ${animal.breed}` : ''}</Text></View><View style={[styles.status, { backgroundColor: status.tint }]}><MaterialCommunityIcons name={status.icon} size={17} color={status.ink} /><Text style={[styles.statusText, { color: status.ink }]}>{status.label}</Text></View></View>
     <Section title="Identity" icon="paw-outline" rows={[
       ['Sex', animal.sex], ['Size', animal.size], ['Relationship', animal.relationship?.replaceAll('_', ' ')],
       ['Estimated age', animal.approximate_age_years != null ? `${animal.approximate_age_years} years` : null],
@@ -157,7 +159,7 @@ export function AnimalDetailScreen({ navigation, route }) {
     <View style={styles.actions}>
       <Pressable accessibilityRole="button" disabled={busy} onPress={() => navigation.navigate('EditAnimal', { animalId })} style={styles.addPhoto}><MaterialCommunityIcons name="pencil-outline" size={22} color={colors.primary} /><Text style={styles.addPhotoText}>Edit details</Text></Pressable>
       {animal.status !== 'archived' && animal.photos.length < 3 ? <Pressable accessibilityRole="button" disabled={busy} onPress={addPhoto} style={styles.addPhoto}><MaterialCommunityIcons name="camera-plus-outline" size={22} color={colors.primary} /><Text style={styles.addPhotoText}>{busy ? 'Uploading photo…' : 'Add photo'}</Text></Pressable> : null}
-      <PrimaryButton label={animal.status === 'archived' ? (busy ? 'Restoring…' : 'Restore animal') : (busy ? 'Archiving…' : 'Archive animal')} onPress={busy ? undefined : toggleArchived} />
+      {['safe', 'archived'].includes(animal.status) ? <PrimaryButton label={animal.status === 'archived' ? (busy ? 'Restoring…' : 'Restore animal') : (busy ? 'Archiving…' : 'Archive animal')} onPress={busy ? undefined : toggleArchived} /> : null}
       {['safe', 'archived'].includes(animal.status) ? <Pressable accessibilityRole="button" accessibilityLabel="Permanently delete animal" accessibilityState={{ disabled: busy }} disabled={busy} onPress={confirmDeleteAnimal} style={styles.deleteAnimal}><MaterialCommunityIcons name="trash-can-outline" size={22} color={colors.error} /><Text style={styles.deleteAnimalText}>Delete animal permanently</Text></Pressable> : null}
     </View>
   </ScreenContainer>;
@@ -191,8 +193,8 @@ const styles = StyleSheet.create({
   headingText: { flex: 1 },
   title: { ...typography.screenTitle, color: colors.textPrimary },
   message: { ...typography.body, color: colors.textSecondary },
-  status: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs, paddingHorizontal: spacing.sm, paddingVertical: spacing.xs, borderRadius: radii.pill, backgroundColor: colors.reunitedTint },
-  statusText: { ...typography.caption, color: colors.reunitedOnTint },
+  status: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs, paddingHorizontal: spacing.sm, paddingVertical: spacing.xs, borderRadius: radii.pill },
+  statusText: { ...typography.caption },
   section: { gap: spacing.sm, paddingVertical: spacing.lg, borderTopWidth: 1, borderTopColor: colors.border },
   sectionTitle: { ...typography.sectionTitle, color: colors.textPrimary },
   privateCard: { gap: spacing.sm, marginVertical: spacing.lg, padding: spacing.lg, borderRadius: radii.lg, backgroundColor: colors.primaryLight },

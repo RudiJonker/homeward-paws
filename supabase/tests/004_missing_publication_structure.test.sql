@@ -80,8 +80,9 @@ insert into publication_structure_results select ok(
   'report photo bucket is private'
 );
 insert into publication_structure_results select ok(
-  not exists (select 1 from pg_proc where pronamespace = 'public'::regnamespace and proname = 'publish_missing_report'),
-  'publishing is not callable yet'
+  exists (select 1 from pg_proc where pronamespace = 'public'::regnamespace and proname = 'publish_missing_report')
+    and not has_function_privilege('anon', 'public.publish_missing_report(uuid)', 'EXECUTE'),
+  'publishing exists but is not callable anonymously'
 );
 insert into publication_structure_results select ok(
   not has_table_privilege('anon', 'public.reports', 'SELECT'),

@@ -67,6 +67,7 @@ Core searchable fields:
 - Created, updated and archived timestamps
 
 Statuses: `safe`, `missing`, `in_care`, `fostered`, `transferred`, `archived`, `deceased`. Reunion is a case outcome; a returned animal becomes `safe`.
+Closing a missing report without reunion does not itself change the animal from `missing`. An explicitly confirmed erroneous report may return the animal to `safe` without being labelled `reunited`. Report status and animal status remain separate facts.
 
 ### `animal_photos`
 
@@ -206,6 +207,8 @@ Notification, device, delivery status, provider response and attempt/delivery ti
 
 Reporter, target type/ID, reason, description, status, assigned admin, resolution and timestamps.
 
+Checkpoint 3 starts with private flags on active public missing reports and their public report photos. Only the flagger and active admins read these flags. Child safety has first queue priority; full admin review actions and flags for later public content types follow in Checkpoint 5.
+
 Reasons include at least: inaccurate or misleading, scam or request for money, harassment, private information exposed, inappropriate image, animal sale or advertising, **child safety**, other. `child_safety` reports are highest priority in the moderation queue and must be actioned within 24 hours (see `08_LEGAL_AND_PLAY_COMPLIANCE.md`).
 
 ### `user_blocks`
@@ -243,6 +246,10 @@ Permanent animal photos; owner write access. Public exposure occurs through deli
 ### `report-photos`
 
 Published incident images with reporter upload and moderation support.
+
+### `sighting-photos` (Checkpoint 3 linked sightings)
+
+One optional compressed JPEG per linked missing-case sighting. The bucket is private. Only the active contributor may upload to their sighting's fixed path; after attachment, Storage read access is limited to the contributor, missing-report owner and active admin. The contributor may remove their own attached photo, including after case closure, or discard an unattached upload. The file is removed through the Storage API before a protected RPC clears its path; the sighting and owner review remain. The public report projection never includes this path or a signed URL. Account deletion removes remaining files through the Storage API before clearing photo metadata.
 
 ### `claim-evidence`
 
@@ -285,7 +292,7 @@ Use protected transactional functions for:
 - Link sighting or match
 - Record/accept transfer
 - Request/confirm reunion
-- Close/reopen report
+- Close report; publish a separately reviewed new alert after an owner's closed case
 - Suspend/reactivate user
 - Verify partner later
 

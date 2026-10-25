@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { ScreenContainer } from '../../components/ScreenContainer';
 import { PrimaryButton } from '../../components/PrimaryButton';
+import { MISSING_BROWSE_ENABLED } from '../../config/checkpoint3';
 import { useSession } from '../../context/SessionContext';
 import { supabase } from '../../services/supabase';
 import { colors, spacing, typography } from '../../theme';
@@ -12,6 +13,7 @@ export function ProfileScreen({ navigation }) {
   const items = [
     ['paw-outline', 'My Animals', 'MyAnimals'],
     ['file-document-outline', 'My Reports', 'MyReports'],
+    ...(MISSING_BROWSE_ENABLED ? [['image-remove-outline', 'Sighting photos', 'ManageSightingPhotos']] : []),
     ['eye-outline', 'My Sightings', null, 'Checkpoint 4'],
     ['account-edit-outline', 'Edit profile', 'EditProfile'],
     ['shield-lock-outline', 'Privacy and contact', 'PrivacyContact'],

@@ -190,6 +190,7 @@ Capture reunion date/time, place, assistance, veterinary need, public-story cons
 ### Close Without Reunion
 
 Allow mistake, duplicate, incorrect information, withdrawal or sensitive other reason. Public wording states only that the report is no longer active unless the owner shares more.
+Closing without reunion makes the report a private, view-only case file under My Reports and removes it from active public Browse. The animal remains `missing` unless, for a mistake or incorrect report, the owner separately confirms that the animal is known to be safe. Closure never implies reunion. If the search continues, the owner may start a new, empty private draft for the same animal. The old case stays closed with its original reference; its location, contact and photos are not copied. The owner must review current details and publish the new alert under a new reference. An animal with an active missing alert cannot start another.
 
 ## 5. I Found an Animal
 
@@ -288,6 +289,8 @@ Tabs: Missing, Found, Sightings and Reunited. Default to List View; Map View arr
 Primary filters: animal type, area/distance, date, colour and size. Additional filters: breed/species, sex, pattern, accessories, chip status, urgency, status and verified-partner involvement later.
 
 Default sort: nearest for coordinate searches and most recent for administrative-area searches. Older active missing reports remain discoverable.
+
+The first Missing list uses province, city/town and suburb names from the report's public area, plus animal type. These filters run before pagination and sort by recent case activity. Device-radius search and nearest sorting require an approved location/search design later in this checkpoint.
 
 ## 8. Matching
 

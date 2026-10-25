@@ -66,7 +66,7 @@ export function MyReportsScreen({ navigation }) {
   useFocusEffect(useCallback(() => { load(); }, [load]));
 
   function openReportFlow(screen, params) {
-    navigation.getParent()?.navigate('Report', { screen, params });
+    navigation.getParent()?.navigate('Report', { screen, params, initial: false });
   }
 
   function confirmDelete(draft) {

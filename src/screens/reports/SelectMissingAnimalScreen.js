@@ -67,7 +67,9 @@ export function SelectMissingAnimalScreen({ navigation }) {
       && closedReports.some((report) => report.animal_id === animal.id)
     ));
   const eligibleAnimals = animals.filter(canStartReport);
-  const unavailableAnimals = animals.filter((animal) => !canStartReport(animal));
+  const activeAnimalIds = new Set(activeReports.map((report) => report.animal_id));
+  const activeAnimals = animals.filter((animal) => activeAnimalIds.has(animal.id));
+  const unavailableAnimals = animals.filter((animal) => !canStartReport(animal) && !activeAnimalIds.has(animal.id));
 
   return (
     <ScreenContainer>
@@ -75,12 +77,12 @@ export function SelectMissingAnimalScreen({ navigation }) {
       <Text style={styles.subtitle}>Choose a registered animal. Your report stays private until you review and publish it.</Text>
       {loading ? <Text style={styles.message}>Loading your animals and drafts…</Text> : null}
       {error ? <View style={styles.state}><MaterialCommunityIcons name="cloud-alert-outline" size={40} color={colors.error} /><Text style={styles.error}>{error}</Text><PrimaryButton label="Try again" onPress={load} /></View> : null}
-      {!loading && !error && eligibleAnimals.length === 0 ? (
+      {!loading && !error && eligibleAnimals.length === 0 && activeAnimals.length === 0 ? (
         <View style={styles.state}>
           <MaterialCommunityIcons name="paw-off-outline" size={48} color={colors.textSecondary} />
           <Text style={styles.stateTitle}>No animals available for a new alert</Text>
           <Text style={styles.message}>Register an animal in My Animals, or return here after closing an older missing alert. An animal with an active alert cannot start another.</Text>
-          <PrimaryButton label="Go to My Animals" onPress={() => navigation.getParent()?.navigate('Profile', { screen: 'MyAnimals' })} />
+          <PrimaryButton label="Go to My Animals" onPress={() => navigation.getParent()?.navigate('Profile', { screen: 'MyAnimals', initial: false })} />
         </View>
       ) : null}
       {!loading && !error ? (
@@ -101,7 +103,19 @@ export function SelectMissingAnimalScreen({ navigation }) {
               </Pressable>
             );
           })}
-          {unavailableAnimals.length ? <Text style={styles.message}>Animals with an active alert, or another unavailable status, cannot start a new alert.</Text> : null}
+          {activeAnimals.length ? <Text style={styles.groupTitle}>Already reported missing</Text> : null}
+          {activeAnimals.map((animal) => (
+            <Pressable key={animal.id} accessibilityRole="button" accessibilityLabel={`Open ${animal.name}'s active missing report in My Reports`} onPress={() => navigation.getParent()?.navigate('Profile', { screen: 'MyReports', initial: false })} style={styles.card}>
+              <Image source={animal.photoUrl ? { uri: animal.photoUrl } : ANIMAL_PLACEHOLDERS[animal.category]} style={styles.photo} />
+              <View style={styles.cardBody}>
+                <Text style={styles.name}>{animal.name}</Text>
+                <Text style={styles.activeStatus}><MaterialCommunityIcons name="alert-circle-outline" size={16} color={colors.missingOnTint} /> MISSING</Text>
+                <Text style={styles.meta}>Active report · View in My Reports</Text>
+              </View>
+              <MaterialCommunityIcons name="chevron-right" size={24} color={colors.textSecondary} />
+            </Pressable>
+          ))}
+          {unavailableAnimals.length ? <Text style={styles.message}>Other animal profiles cannot start a new alert right now. You can still view them in My Animals.</Text> : null}
         </View>
       ) : null}
     </ScreenContainer>
@@ -112,12 +126,14 @@ const styles = StyleSheet.create({
   title: { ...typography.screenTitle, color: colors.textPrimary },
   subtitle: { ...typography.body, color: colors.textSecondary, marginTop: spacing.xs, marginBottom: spacing.xxl },
   list: { gap: spacing.md },
+  groupTitle: { ...typography.sectionTitle, color: colors.textPrimary, marginTop: spacing.lg },
   card: { minHeight: 112, flexDirection: 'row', alignItems: 'center', gap: spacing.md, padding: spacing.md, borderWidth: 1, borderColor: colors.border, borderRadius: radii.lg, backgroundColor: colors.surface, ...shadows.card },
   photo: { width: 82, height: 82, borderRadius: radii.md },
   cardBody: { flex: 1, gap: spacing.xs },
   name: { ...typography.sectionTitle, color: colors.textPrimary },
   meta: { ...typography.body, color: colors.textSecondary },
   actionText: { ...typography.bodyStrong, color: colors.missingOnTint },
+  activeStatus: { ...typography.bodyStrong, color: colors.missingOnTint },
   state: { alignItems: 'center', gap: spacing.md, paddingVertical: spacing.xxl },
   stateTitle: { ...typography.sectionTitle, color: colors.textPrimary, textAlign: 'center' },
   message: { ...typography.body, color: colors.textSecondary, textAlign: 'center' },

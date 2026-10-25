@@ -21,7 +21,7 @@ const Stack = createNativeStackNavigator();
 
 export function ProfileNavigator() {
   return (
-    <Stack.Navigator screenOptions={{ headerStyle: { backgroundColor: colors.background }, headerShadowVisible: false, headerTintColor: colors.textPrimary }}>
+    <Stack.Navigator initialRouteName="ProfileHome" screenOptions={{ headerStyle: { backgroundColor: colors.background }, headerShadowVisible: false, headerTintColor: colors.textPrimary }}>
       <Stack.Screen name="ProfileHome" component={ProfileScreen} options={{ headerShown: false }} />
       <Stack.Screen name="MyAnimals" component={MyAnimalsScreen} options={{ title: 'My Animals' }} />
       <Stack.Screen name="MyReports" component={MyReportsScreen} options={{ title: 'My Reports' }} />

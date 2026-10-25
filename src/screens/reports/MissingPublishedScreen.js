@@ -31,7 +31,7 @@ export function MissingPublishedScreen({ navigation, route }) {
         <Text selectable style={styles.reference}>{reference}</Text>
       </View>
       <PrimaryButton label="View public report" onPress={() => navigation.getParent()?.navigate('Browse', {
-        screen: 'MissingReportDetail', params: { reportId }
+        screen: 'MissingReportDetail', params: { reportId }, initial: false
       })} />
       <Pressable accessibilityRole="button" onPress={shareReference} style={styles.secondaryButton}>
         <MaterialCommunityIcons name="share-variant-outline" size={21} color={colors.primary} />

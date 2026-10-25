@@ -108,6 +108,8 @@ Registration sections 3.2–3.8 appear together on one scrollable screen. The me
 | 4.12 | Close Missing Report | 3 |
 | 4.13 | Missing Case Timeline | 3 |
 
+Select Missing Animal lists animals eligible for a new alert and shows animals with an active missing report separately, with a route to My Reports. An active report cannot be selected to create a duplicate.
+
 ### Group 5 — Found
 
 | ID | Screen | Checkpoint |
@@ -249,6 +251,8 @@ Registration sections 3.2–3.8 appear together on one scrollable screen. The me
 ## 5. Shared Routes and Components
 
 Screen IDs describe user-visible states, not mandatory one-file-per-screen implementation. Use shared wizard, report detail, timeline, location, photo, filter, match and outcome components.
+
+Opening a Profile child screen from another tab must retain Profile Home as the stack root. Returning to the Profile tab shows its menu so My Reports, account settings and Log out remain reachable.
 
 ## 6. Global Modals
 

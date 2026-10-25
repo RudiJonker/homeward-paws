@@ -89,7 +89,7 @@ export function HomeScreen({ navigation }) {
     };
   }, [loadSightingAlerts]));
 
-  const openProfile = (screen, params) => navigation.navigate(routes.profile, { screen, params });
+  const openProfile = (screen, params) => navigation.navigate(routes.profile, { screen, params, initial: false });
 
   return (
     <ScreenContainer>

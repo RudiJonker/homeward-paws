@@ -32,7 +32,8 @@ export function MemberNavigator({ navigation }) {
     if (!MISSING_BROWSE_ENABLED || !pendingSightingIntent?.reportId) return;
     navigation.navigate(routes.member, {
       screen: routes.browse,
-      params: { screen: 'LinkedSighting', params: pendingSightingIntent }
+      initial: false,
+      params: { screen: 'LinkedSighting', params: pendingSightingIntent, initial: false }
     });
     setPendingSightingIntent(null).catch(() => {});
   }, [navigation, pendingSightingIntent, setPendingSightingIntent]);
@@ -41,7 +42,8 @@ export function MemberNavigator({ navigation }) {
     if (!MISSING_BROWSE_ENABLED || !pendingContentReportIntent?.reportId) return;
     navigation.navigate(routes.member, {
       screen: routes.browse,
-      params: { screen: 'ReportMissingContent', params: pendingContentReportIntent }
+      initial: false,
+      params: { screen: 'ReportMissingContent', params: pendingContentReportIntent, initial: false }
     });
     setPendingContentReportIntent(null).catch(() => {});
   }, [navigation, pendingContentReportIntent, setPendingContentReportIntent]);
@@ -74,7 +76,7 @@ export function MemberNavigator({ navigation }) {
         options={{ tabBarAccessibilityLabel: 'Report an animal' }}
       />
       <Tab.Screen name={routes.following} component={FollowingScreen} />
-      <Tab.Screen name={routes.profile} component={ProfileNavigator} />
+      <Tab.Screen name={routes.profile} component={ProfileNavigator} options={{ popToTopOnBlur: true }} />
     </Tab.Navigator>
   );
 }

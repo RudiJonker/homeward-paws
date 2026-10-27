@@ -1,8 +1,8 @@
 # Homeward Paws website — launch version
 
-A static, mobile-first, low-data website for the Google Play launch of Homeward Paws. Plain HTML and CSS, no JavaScript, no frameworks and no third-party requests (Nunito is self-hosted). Upload the contents of the `site` folder to the web root of your host.
+A static, mobile-first, low-data website for the Google Play launch of Homeward Paws. Plain HTML and CSS, no JavaScript, no frameworks and no third-party requests (Nunito is self-hosted). Upload the contents of this folder to the web root of your host.
 
-The `source` folder is for editing only; do not upload it.
+Do not upload `README.md`.
 
 ## Pages and the Play Console fields they satisfy
 
@@ -72,7 +72,7 @@ Replace both "Coming soon to Google Play" blocks on the home page with the offic
 
 ## Source
 
-The legal and help pages are assembled from `src/` by `build.py` in `source/` (run `python3 source/build.py`) (shared header and footer). Editing the built HTML directly is fine for small changes.
+The legal and help pages are assembled from `src/` by `build.py` in the separate source folder (shared header and footer). Editing the built HTML directly is fine for small changes.
 
 ## Photos
 

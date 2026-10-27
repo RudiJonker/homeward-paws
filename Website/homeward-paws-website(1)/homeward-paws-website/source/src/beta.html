@@ -1,0 +1,159 @@
+<!--
+title: Join the beta
+description: Sign up to test Homeward Paws on Android before it launches on Google Play. We email you the download link and install steps.
+-->
+<style>
+  .beta { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 460px); gap: 48px; padding-block: 32px 80px; align-items: start; }
+  .beta .prose { max-width: 620px; }
+  .beta-form { display: flex; flex-direction: column; gap: 16px; }
+  .beta-form h2 { font-size: 24px; font-weight: 900; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field label { font-weight: 800; font-size: 15px; }
+  .field .hint { color: var(--ink-2); font-size: 14px; font-weight: 600; }
+  .field input, .field select { font: inherit; font-size: 16px; font-weight: 600; color: var(--ink); background: var(--surface); border: 2px solid var(--line); border-radius: var(--radius-sm); min-height: 50px; padding: 10px 14px; width: 100%; }
+  .field input:focus, .field select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .check { display: grid; grid-template-columns: 24px 1fr; gap: 10px; align-items: start; font-weight: 600; font-size: 15px; }
+  .check input { width: 22px; height: 22px; margin: 1px 0 0; accent-color: var(--primary); }
+  .hp { position: absolute !important; left: -9999px !important; width: 1px; height: 1px; overflow: hidden; }
+  .form-msg { border-radius: var(--radius-md); padding: 14px 16px; font-weight: 700; }
+  .form-msg.error { background: var(--missing-tint); color: var(--missing-on); }
+  .beta-done { text-align: left; }
+  .beta-done .icon { width: 64px; height: 64px; border-radius: 50%; background: var(--reunited-tint); color: var(--reunited-on); display: grid; place-items: center; font-size: 32px; font-weight: 900; margin-bottom: 12px; }
+  .beta-form .btn { width: 100%; }
+  .beta-form .btn[disabled] { opacity: .6; cursor: progress; }
+  .small { font-size: 14px; color: var(--ink-2); font-weight: 600; }
+  [hidden] { display: none !important; }
+  @media (max-width: 900px) { .beta { grid-template-columns: 1fr; gap: 32px; } .beta-side { order: -1; } }
+  @media (max-width: 480px) { .row2 { grid-template-columns: 1fr; } }
+</style>
+<main id="main">
+  <div class="wrap doc-hero">
+    <span class="eyebrow">Beta testing · Android</span>
+    <h1>Help us test Homeward Paws</h1>
+    <p class="meta">Try the app before it launches on Google Play and tell us what works and what doesn't. Sign up below and we'll email you the download link and simple install steps.</p>
+  </div>
+
+  <div class="wrap beta">
+    <article class="prose">
+      <section>
+        <h2>What beta testing involves</h2>
+        <ul>
+          <li>You install a test version of the app on your Android phone, straight from this website.</li>
+          <li>You create an account, register your animals and try the features. Missing reports and sightings you publish are visible to other app users, so only report real cases, or animal details clearly marked as a test when we ask you to try a flow.</li>
+          <li>You tell us about bugs, confusing screens or ideas by replying to any beta email, or writing to <a href="mailto:info@digitack.co.za?subject=Homeward%20Paws%20beta">info@digitack.co.za</a>.</li>
+          <li>We send you a new download link when there's an update. Test versions can have bugs, and we may reset test data before the public launch. We'll tell you first.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Who can join</h2>
+        <ul>
+          <li>Anyone in South Africa aged 18 or older.</li>
+          <li>You need an Android phone. There is no iPhone version yet.</li>
+          <li>It's free. There are no payments or subscriptions.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Installing the test app</h2>
+        <ol class="steps-list">
+          <li>Open the download link in our email <strong>on your Android phone</strong>.</li>
+          <li>When your phone asks, allow your browser to install apps from this source. Android shows this for any app installed outside Google Play.</li>
+          <li>Open <strong>Homeward Paws</strong>, sign up with your email, and enter the 6-digit code we email you.</li>
+        </ol>
+        <p class="small">When we release an update, open the newest download link and install it over the app you have. Your account and animals are kept.</p>
+      </section>
+    </article>
+
+    <aside class="beta-side">
+      <div class="card">
+        <form class="beta-form" id="beta-form" action="beta-signup.php" method="post" novalidate>
+          <h2>Sign up as a beta tester</h2>
+
+          <div class="field">
+            <label for="first_name">First name</label>
+            <input id="first_name" name="first_name" type="text" autocomplete="given-name" maxlength="60" required>
+          </div>
+
+          <div class="field">
+            <label for="email">Email address</label>
+            <input id="email" name="email" type="email" autocomplete="email" inputmode="email" maxlength="120" required>
+            <span class="hint">We send the download link here. Use the address you'll sign up with in the app.</span>
+          </div>
+
+          <div class="field">
+            <label for="phone_model">Phone make and model <span class="hint">(optional)</span></label>
+            <input id="phone_model" name="phone_model" type="text" maxlength="80" placeholder="For example Samsung A15">
+          </div>
+
+          <div class="row2">
+            <div class="field">
+              <label for="province">Province <span class="hint">(optional)</span></label>
+              <select id="province" name="province">
+                <option value="">Choose</option>
+                <option>Eastern Cape</option><option>Free State</option><option>Gauteng</option>
+                <option>KwaZulu-Natal</option><option>Limpopo</option><option>Mpumalanga</option>
+                <option>North West</option><option>Northern Cape</option><option>Western Cape</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="town">Town or suburb <span class="hint">(optional)</span></label>
+              <input id="town" name="town" type="text" maxlength="80">
+            </div>
+          </div>
+
+          <div class="hp" aria-hidden="true">
+            <label for="website">Leave this empty</label>
+            <input id="website" name="website" type="text" tabindex="-1" autocomplete="off">
+          </div>
+          <input type="hidden" name="started" id="started" value="">
+
+          <label class="check"><input type="checkbox" name="adult" value="1" required><span>I am 18 or older and use an Android phone.</span></label>
+          <label class="check"><input type="checkbox" name="agree" value="1" required><span>I agree to the <a href="terms.html" target="_blank">terms of use</a> and have read the <a href="privacy-policy.html" target="_blank">privacy policy</a>. Digitack may email me about the beta.</span></label>
+
+          <div class="form-msg error" id="form-error" role="alert" hidden></div>
+
+          <button class="btn btn-primary" type="submit" id="submit-btn">Send me the download link</button>
+          <p class="small">We use these details only to run the beta. Ask us to remove you at any time: <a href="mailto:info@digitack.co.za?subject=Remove%20me%20from%20the%20beta">info@digitack.co.za</a>.</p>
+        </form>
+
+        <div class="beta-done" id="beta-done" hidden>
+          <div class="icon" aria-hidden="true">✓</div>
+          <h2>Check your inbox</h2>
+          <p>We've sent the download link to <strong id="done-email"></strong>. Open it on your Android phone.</p>
+          <p class="small">Nothing after a few minutes? Check your spam or promotions folder, or email <a href="mailto:info@digitack.co.za?subject=Homeward%20Paws%20beta">info@digitack.co.za</a>.</p>
+        </div>
+      </div>
+    </aside>
+  </div>
+</main>
+<script>
+(function () {
+  var form = document.getElementById('beta-form');
+  if (!form || !window.fetch) return;
+  document.getElementById('started').value = String(Date.now());
+  var err = document.getElementById('form-error');
+  var btn = document.getElementById('submit-btn');
+  function fail(msg) { err.textContent = msg; err.hidden = false; btn.disabled = false; btn.textContent = 'Send me the download link'; }
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    err.hidden = true;
+    var f = form.elements;
+    if (!f.first_name.value.trim()) return fail('Please enter your first name.');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email.value.trim())) return fail('Please enter a valid email address.');
+    if (!f.adult.checked) return fail('Beta testers must be 18 or older and use an Android phone.');
+    if (!f.agree.checked) return fail('Please accept the terms and privacy policy.');
+    btn.disabled = true; btn.textContent = 'Sending…';
+    fetch(form.action, { method: 'POST', body: new FormData(form), headers: { 'Accept': 'application/json' } })
+      .then(function (r) { return r.json().catch(function () { return { ok: false }; }); })
+      .then(function (d) {
+        if (!d.ok) return fail(d.error || 'Something went wrong. Please try again, or email info@digitack.co.za.');
+        document.getElementById('done-email').textContent = f.email.value.trim();
+        form.hidden = true;
+        document.getElementById('beta-done').hidden = false;
+      })
+      .catch(function () { fail('We could not reach the server. Check your connection and try again.'); });
+  });
+})();
+</script>

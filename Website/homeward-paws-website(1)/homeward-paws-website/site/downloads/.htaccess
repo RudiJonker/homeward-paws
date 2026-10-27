@@ -1,0 +1,10 @@
+# Serve Android packages with the right type so phones offer to install them.
+AddType application/vnd.android.package-archive .apk
+Options -Indexes
+<IfModule mod_headers.c>
+  <FilesMatch "\.apk$">
+    Header set Content-Disposition "attachment"
+    Header set Cache-Control "no-cache"
+    Header set X-Robots-Tag "noindex"
+  </FilesMatch>
+</IfModule>

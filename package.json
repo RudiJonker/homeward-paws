@@ -13,6 +13,7 @@
   "scripts": {
     "start": "expo start",
     "android": "expo run:android",
+    "apk:local": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-local-test-apk.ps1",
     "lint": "eslint .",
     "doctor": "expo-doctor"
   },

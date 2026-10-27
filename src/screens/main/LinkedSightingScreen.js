@@ -30,6 +30,8 @@ export function LinkedSightingScreen({ navigation, route }) {
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [dirty, setDirty] = useState(false);
+  const [suburbPointNeedsConfirmation, setSuburbPointNeedsConfirmation] = useState(false);
+  const [suburbPointConfirmed, setSuburbPointConfirmed] = useState(false);
   const [submittedId, setSubmittedId] = useState(null);
   const [savedSightingId, setSavedSightingId] = useState(null);
   const [photoUri, setPhotoUri] = useState(null);
@@ -46,14 +48,22 @@ export function LinkedSightingScreen({ navigation, route }) {
   });
 
   function update(field, value, clearPoint = false) {
+    const correctingCapturedSuburb = field === 'suburb' && values.locationSource === 'device';
+    const shouldClearPoint = clearPoint && !correctingCapturedSuburb;
     setValues((current) => ({
       ...current, [field]: value,
-      ...(clearPoint ? { locationSource: 'manual', latitude: null, longitude: null, accuracyMetres: null } : {})
+      ...(shouldClearPoint ? { locationSource: 'manual', latitude: null, longitude: null, accuracyMetres: null } : {})
     }));
     setErrors((current) => ({ ...current, [field]: undefined, location: undefined }));
     setDirty(true);
     setError('');
-    if (clearPoint && values.locationSource === 'device') {
+    if (correctingCapturedSuburb) {
+      setSuburbPointNeedsConfirmation(true);
+      setSuburbPointConfirmed(false);
+      setMessage('Suburb name corrected. Confirm below that it matches your captured device point.');
+    } else if (shouldClearPoint && values.locationSource === 'device') {
+      setSuburbPointNeedsConfirmation(false);
+      setSuburbPointConfirmed(false);
       setMessage('Area changed. The previous exact device point was cleared so it cannot point to the wrong place.');
     }
   }
@@ -83,6 +93,8 @@ export function LinkedSightingScreen({ navigation, route }) {
         throw new Error('This place is outside South Africa. Enter the observation area manually.');
       }
       const area = suggestGeocodedArea(address);
+      setSuburbPointNeedsConfirmation(false);
+      setSuburbPointConfirmed(false);
       setValues((current) => ({
         ...current, locationSource: 'device',
         latitude: position.coords.latitude, longitude: position.coords.longitude,
@@ -104,6 +116,10 @@ export function LinkedSightingScreen({ navigation, route }) {
 
   async function submit() {
     if (submitting.current || submittedId || savedSightingId) return;
+    if (suburbPointNeedsConfirmation && !suburbPointConfirmed) {
+      setError('Confirm that your corrected suburb matches the captured device point before sending.');
+      return;
+    }
     const checked = validateLinkedSighting(values, lastSeenAt);
     if (!checked.valid) {
       setErrors(checked.errors);
@@ -202,6 +218,7 @@ export function LinkedSightingScreen({ navigation, route }) {
     <FormField label="Province" value={values.province} onChangeText={(value) => update('province', value, true)} error={errors.province} autoCapitalize="words" />
     <FormField label="City or town" value={values.city} onChangeText={(value) => update('city', value, true)} error={errors.city} autoCapitalize="words" />
     <FormField label="Suburb or area" value={values.suburb} onChangeText={(value) => update('suburb', value, true)} error={errors.suburb} autoCapitalize="words" />
+    {suburbPointNeedsConfirmation && values.locationSource === 'device' ? <Pressable accessibilityRole="checkbox" accessibilityState={{ checked: suburbPointConfirmed }} onPress={() => { setSuburbPointConfirmed((confirmed) => !confirmed); setError(''); }} style={styles.checkRow}><MaterialCommunityIcons name={suburbPointConfirmed ? 'checkbox-marked' : 'checkbox-blank-outline'} size={22} color={colors.primary} /><Text style={styles.choiceText}>The corrected suburb matches my captured device point</Text></Pressable> : null}
     <FormField label="Street or public landmark (optional, private)" value={values.streetOrLandmark} onChangeText={(value) => update('streetOrLandmark', value)} error={errors.streetOrLandmark} />
 
     <Text style={styles.section}>What was happening?</Text>

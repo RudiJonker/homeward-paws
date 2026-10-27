@@ -16,6 +16,7 @@ export function ProfileScreen({ navigation }) {
     ...(MISSING_BROWSE_ENABLED ? [['image-remove-outline', 'Sighting photos', 'ManageSightingPhotos']] : []),
     ['eye-outline', 'My Sightings', null, 'Checkpoint 4'],
     ['account-edit-outline', 'Edit profile', 'EditProfile'],
+    ['map-marker-outline', 'Edit home area', 'SetHomeArea'],
     ['shield-lock-outline', 'Privacy and contact', 'PrivacyContact'],
     ['lifebuoy', 'Help and safety', 'HelpSafety'],
     ['information-outline', 'About', 'About'],

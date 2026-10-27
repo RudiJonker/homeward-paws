@@ -47,7 +47,8 @@ export function CompleteProfileScreen({ navigation }) {
     setBusy(false);
     if (publicError || privateError) return setMessage((publicError || privateError).message);
     await refreshProfile();
-    navigation.navigate('SetHomeArea');
+    if (profile?.profile_completed) navigation.goBack();
+    else navigation.navigate('SetHomeArea');
   }
 
   const avatarUrl = avatarPath ? supabase.storage.from('avatars').getPublicUrl(avatarPath).data.publicUrl : null;

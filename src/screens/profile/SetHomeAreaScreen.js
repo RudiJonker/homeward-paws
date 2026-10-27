@@ -1,6 +1,6 @@
 import * as Location from 'expo-location';
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { FormField } from '../../components/forms/FormField';
 import { PrimaryButton } from '../../components/PrimaryButton';
@@ -11,8 +11,9 @@ import { supabase } from '../../services/supabase';
 import { colors, radii, spacing, typography } from '../../theme';
 import { deviceAccuracyMessage, suggestGeocodedArea } from '../../utils/geocodedArea';
 
-export function SetHomeAreaScreen() {
-  const { privateProfile, refreshProfile } = useSession();
+export function SetHomeAreaScreen({ navigation }) {
+  const { profile, privateProfile, refreshProfile } = useSession();
+  const editing = Boolean(profile?.profile_completed);
   const [province, setProvince] = useState(privateProfile?.province ?? '');
   const [city, setCity] = useState(privateProfile?.city ?? '');
   const [suburb, setSuburb] = useState(privateProfile?.suburb ?? '');
@@ -49,22 +50,28 @@ export function SetHomeAreaScreen() {
   async function submit() {
     if (!SOUTH_AFRICAN_PROVINCES.includes(province) || !city.trim() || !suburb.trim()) return setMessage('Choose a province and enter your city or town and suburb.');
     setBusy(true); setMessage('');
-    const { error } = await supabase.rpc('complete_member_profile', {
-      home_province: province,
-      home_city: city.trim(),
-      home_suburb: suburb.trim(),
-      home_latitude: coords?.latitude ?? null,
-      home_longitude: coords?.longitude ?? null,
-      home_location_source: source
-    });
-    setBusy(false);
-    if (error) return setMessage(error.message);
-    await refreshProfile();
+    try {
+      const { error } = await supabase.rpc('complete_member_profile', {
+        home_province: province,
+        home_city: city.trim(),
+        home_suburb: suburb.trim(),
+        home_latitude: coords?.latitude ?? null,
+        home_longitude: coords?.longitude ?? null,
+        home_location_source: source
+      });
+      if (error) throw error;
+      await refreshProfile();
+      if (editing) Alert.alert('Home area saved', 'Your updated area is private.', [{ text: 'Done', onPress: () => navigation.goBack() }]);
+    } catch (error) {
+      setMessage(`Could not save your home area. Check your connection and try again. ${error.message}`);
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (
     <ScreenContainer>
-      <Text style={styles.title}>Set your home area</Text>
+      <Text style={styles.title}>{editing ? 'Edit your home area' : 'Set your home area'}</Text>
       <Text style={styles.subtitle}>This helps prioritize nearby reports. Your home coordinates are never public.</Text>
       <View style={styles.form}>
         <PrimaryButton label={busy ? 'Finding area…' : 'Use my location (optional)'} onPress={busy ? undefined : useLocation} />
@@ -73,7 +80,7 @@ export function SetHomeAreaScreen() {
         <FormField label="City or town" value={city} onChangeText={(value) => { setCity(value); editArea(); }} />
         <FormField label="Suburb" value={suburb} onChangeText={(value) => { setSuburb(value); editArea(); }} />
         {message ? <Text style={styles.message}>{message}</Text> : null}
-        <PrimaryButton label={busy ? 'Saving…' : 'Finish profile'} onPress={busy ? undefined : submit} />
+        <PrimaryButton label={busy ? 'Saving…' : editing ? 'Save home area' : 'Finish profile'} onPress={busy ? undefined : submit} />
       </View>
     </ScreenContainer>
   );

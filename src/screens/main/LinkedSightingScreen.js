@@ -11,6 +11,7 @@ import { FormField } from '../../components/forms/FormField';
 import { useSession } from '../../context/SessionContext';
 import { attachLinkedSightingPhoto, chooseLinkedSightingPhoto, removeLinkedSightingPhoto, submitLinkedSighting } from '../../services/linkedSightingService';
 import { colors, radii, spacing, typography } from '../../theme';
+import { deviceAccuracyMessage, suggestGeocodedArea } from '../../utils/geocodedArea';
 import { SIGHTING_CONDITIONS, SIGHTING_MOVEMENTS, blankLinkedSighting, validateLinkedSighting } from '../../utils/linkedSighting';
 
 function Choice({ label, selected, onPress }) {
@@ -81,17 +82,18 @@ export function LinkedSightingScreen({ navigation, route }) {
       if (address?.isoCountryCode && address.isoCountryCode !== 'ZA') {
         throw new Error('This place is outside South Africa. Enter the observation area manually.');
       }
+      const area = suggestGeocodedArea(address);
       setValues((current) => ({
         ...current, locationSource: 'device',
         latitude: position.coords.latitude, longitude: position.coords.longitude,
         accuracyMetres: position.coords.accuracy ?? null,
-        province: address?.region ?? current.province,
-        city: address?.city ?? address?.district ?? current.city,
-        suburb: address?.subregion ?? address?.name ?? current.suburb
+        province: area.province,
+        city: area.city,
+        suburb: area.suburb
       }));
       setErrors({});
       setDirty(true);
-      setMessage('Exact device point saved privately for the missing-report owner. Check the area fields before sending.');
+      setMessage(`${deviceAccuracyMessage(position.coords.accuracy)}Device point saved privately for the missing-report owner. ${area.suburb ? 'Check the area fields before sending.' : 'Enter the suburb manually; the device could not name it.'}`);
     } catch (locationError) {
       setMessage('Could not capture this place. Enter the area manually instead.');
       setError(locationError.message);

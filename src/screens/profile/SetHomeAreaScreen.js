@@ -9,6 +9,7 @@ import { SOUTH_AFRICAN_PROVINCES } from '../../config/constants';
 import { useSession } from '../../context/SessionContext';
 import { supabase } from '../../services/supabase';
 import { colors, radii, spacing, typography } from '../../theme';
+import { deviceAccuracyMessage, suggestGeocodedArea } from '../../utils/geocodedArea';
 
 export function SetHomeAreaScreen() {
   const { privateProfile, refreshProfile } = useSession();
@@ -26,16 +27,23 @@ export function SetHomeAreaScreen() {
     if (permission.status !== 'granted') return setMessage('Location permission was denied. Enter your area manually below.');
     setBusy(true);
     try {
-      const position = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
+      const position = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
       const [address] = await Location.reverseGeocodeAsync(position.coords);
+      const area = suggestGeocodedArea(address);
       setCoords({ latitude: position.coords.latitude, longitude: position.coords.longitude });
-      setProvince(address?.region ?? province);
-      setCity(address?.city ?? address?.district ?? city);
-      setSuburb(address?.subregion ?? address?.name ?? suburb);
+      setProvince(area.province);
+      setCity(area.city);
+      setSuburb(area.suburb);
       setSource('device');
-      setMessage('Suggested area added. Please confirm or correct it.');
+      setMessage(`${deviceAccuracyMessage(position.coords.accuracy)}${area.suburb ? 'Suggested area added.' : 'The device could not name a suburb.'} Confirm the area before saving.`);
     } catch (error) { setMessage(`We could not determine your area. Enter it manually. ${error.message}`); }
     finally { setBusy(false); }
+  }
+
+  function editArea() {
+    setCoords(null);
+    setSource('manual');
+    setMessage('Area edited. The device point was cleared; only the manually entered area will be saved.');
   }
 
   async function submit() {
@@ -61,9 +69,9 @@ export function SetHomeAreaScreen() {
       <View style={styles.form}>
         <PrimaryButton label={busy ? 'Finding area…' : 'Use my location (optional)'} onPress={busy ? undefined : useLocation} />
         <Text style={styles.label}>Province</Text>
-        <View style={styles.provinces}>{SOUTH_AFRICAN_PROVINCES.map((item) => <Pressable key={item} onPress={() => { setProvince(item); setSource('manual'); }} style={[styles.chip, item === province && styles.chipSelected]}><Text style={[styles.chipText, item === province && styles.chipTextSelected]}>{item}</Text></Pressable>)}</View>
-        <FormField label="City or town" value={city} onChangeText={(value) => { setCity(value); setSource('manual'); }} />
-        <FormField label="Suburb" value={suburb} onChangeText={(value) => { setSuburb(value); setSource('manual'); }} />
+        <View style={styles.provinces}>{SOUTH_AFRICAN_PROVINCES.map((item) => <Pressable key={item} onPress={() => { setProvince(item); editArea(); }} style={[styles.chip, item === province && styles.chipSelected]}><Text style={[styles.chipText, item === province && styles.chipTextSelected]}>{item}</Text></Pressable>)}</View>
+        <FormField label="City or town" value={city} onChangeText={(value) => { setCity(value); editArea(); }} />
+        <FormField label="Suburb" value={suburb} onChangeText={(value) => { setSuburb(value); editArea(); }} />
         {message ? <Text style={styles.message}>{message}</Text> : null}
         <PrimaryButton label={busy ? 'Saving…' : 'Finish profile'} onPress={busy ? undefined : submit} />
       </View>

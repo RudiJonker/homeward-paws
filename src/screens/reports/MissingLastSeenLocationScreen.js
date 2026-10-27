@@ -11,6 +11,7 @@ import { SOUTH_AFRICAN_PROVINCES } from '../../config/constants';
 import { useSession } from '../../context/SessionContext';
 import { getMissingDraft, saveMissingDraft } from '../../services/missingReportService';
 import { colors, radii, spacing, typography } from '../../theme';
+import { deviceAccuracyMessage, suggestGeocodedArea } from '../../utils/geocodedArea';
 import { blankMissingLocation, publicLocationPreview, restoreMissingLocationDraft, validateMissingLocation } from '../../utils/missingLocation';
 
 const PRECISION_OPTIONS = [
@@ -125,12 +126,13 @@ export function MissingLastSeenLocationScreen({ navigation, route }) {
       if (address?.isoCountryCode && address.isoCountryCode !== 'ZA') {
         throw new Error('The current place is outside South Africa. Enter the last-seen place manually.');
       }
+      const area = suggestGeocodedArea(address);
       setPlace({
         ...blankMissingLocation,
         method: 'device',
-        province: address?.region ?? '',
-        city: address?.city ?? address?.district ?? '',
-        suburb: address?.subregion ?? address?.name ?? '',
+        province: area.province,
+        city: area.city,
+        suburb: area.suburb,
         latitude: position.coords.latitude,
         longitude: position.coords.longitude,
         accuracyMetres: position.coords.accuracy ?? null
@@ -138,7 +140,7 @@ export function MissingLastSeenLocationScreen({ navigation, route }) {
       setErrors({});
       setDirty(true);
       setSavedMessage('');
-      setMessage('Device place added. Check the suburb, city and province. Public sharing is still set to suburb only.');
+      setMessage(`${deviceAccuracyMessage(position.coords.accuracy)}${area.suburb ? 'Check the suggested suburb, city and province.' : 'Enter the suburb manually; the device could not name it.'} Public sharing is still set to suburb only.`);
     } catch (locationError) {
       setMessage('Could not find this place. Enter it manually instead.');
       setError(locationError.message);

@@ -2,9 +2,10 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useFocusEffect, usePreventRemove } from '@react-navigation/native';
 import * as Location from 'expo-location';
 import { useCallback, useRef, useState } from 'react';
-import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
+import { useAppDialog } from '../../components/AppDialog';
 import { ScreenContainer } from '../../components/ScreenContainer';
 import { FormField } from '../../components/forms/FormField';
 import { SOUTH_AFRICAN_PROVINCES } from '../../config/constants';
@@ -20,6 +21,7 @@ const PRECISION_OPTIONS = [
 ];
 
 export function MissingLastSeenLocationScreen({ navigation, route }) {
+  const { showDialog } = useAppDialog();
   const { animalId, reportId } = route.params;
   const { privateProfile } = useSession();
   const [place, setPlace] = useState(blankMissingLocation);
@@ -61,7 +63,7 @@ export function MissingLastSeenLocationScreen({ navigation, route }) {
   }, [load]));
 
   usePreventRemove(dirty, ({ data }) => {
-    Alert.alert('Leave without saving?', 'Changes on this screen will be lost. Your last saved private draft will remain.', [
+    showDialog('Leave without saving?', 'Changes on this screen will be lost. Your last saved private draft will remain.', [
       { text: 'Keep editing', style: 'cancel' },
       { text: 'Leave', style: 'destructive', onPress: () => navigation.dispatch(data.action) }
     ]);
@@ -90,7 +92,7 @@ export function MissingLastSeenLocationScreen({ navigation, route }) {
       setError('Your home area is incomplete. Enter the last-seen area manually.');
       return;
     }
-    Alert.alert('Use your home area?', 'Only the province, city and suburb will be copied. Your home address and coordinates will not be copied. Confirm this is where the animal was last seen.', [
+    showDialog('Use your home area?', 'Only the province, city and suburb will be copied. Your home address and coordinates will not be copied. Confirm this is where the animal was last seen.', [
       { text: 'Cancel', style: 'cancel' },
       { text: 'Use area only', onPress: () => {
         setPlace({ ...blankMissingLocation, method: 'home_area', province, city, suburb });
@@ -104,7 +106,7 @@ export function MissingLastSeenLocationScreen({ navigation, route }) {
   }
 
   function confirmCurrentPlace() {
-    Alert.alert('Are you at the last-seen place?', 'Use your device location only if you are physically where the animal was last seen. Otherwise enter the place manually.', [
+    showDialog('Are you at the last-seen place?', 'Use your device location only if you are physically where the animal was last seen. Otherwise enter the place manually.', [
       { text: 'Enter manually', style: 'cancel' },
       { text: 'Yes, use this place', onPress: captureCurrentPlace }
     ]);
@@ -175,7 +177,7 @@ export function MissingLastSeenLocationScreen({ navigation, route }) {
         ? 'Last-seen location saved privately. Next, choose safety and contact options. Nothing has been published.'
         : 'Incomplete location saved privately. You can return and finish it later.';
       setSavedMessage(confirmation);
-      Alert.alert('Draft saved', confirmation, finishStep ? [
+      showDialog('Draft saved', confirmation, finishStep ? [
         { text: 'Continue', onPress: () => navigation.navigate('MissingSafetyContact', { animalId, reportId }) },
         { text: 'Keep editing', style: 'cancel' }
       ] : [

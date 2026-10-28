@@ -1,9 +1,10 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useFocusEffect, usePreventRemove } from '@react-navigation/native';
 import { useCallback, useRef, useState } from 'react';
-import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
+import { useAppDialog } from '../../components/AppDialog';
 import { ScreenContainer } from '../../components/ScreenContainer';
 import { FormField } from '../../components/forms/FormField';
 import { useSession } from '../../context/SessionContext';
@@ -21,6 +22,7 @@ function ChoiceRow({ label, checked, onPress, disabled = false, single = false }
 }
 
 export function MissingSafetyContactScreen({ navigation, route }) {
+  const { showDialog } = useAppDialog();
   const { animalId, reportId } = route.params;
   const { privateProfile } = useSession();
   const [values, setValues] = useState(blankMissingSafetyContact);
@@ -64,7 +66,7 @@ export function MissingSafetyContactScreen({ navigation, route }) {
   }, [load]));
 
   usePreventRemove(dirty, ({ data }) => {
-    Alert.alert('Leave without saving?', 'Changes on this screen will be lost. Your last saved private draft will remain.', [
+    showDialog('Leave without saving?', 'Changes on this screen will be lost. Your last saved private draft will remain.', [
       { text: 'Keep editing', style: 'cancel' },
       { text: 'Leave', style: 'destructive', onPress: () => navigation.dispatch(data.action) }
     ]);
@@ -112,7 +114,7 @@ export function MissingSafetyContactScreen({ navigation, route }) {
         ? 'Safety and contact choices saved privately. Next, review what could be public. Nothing has been published.'
         : 'Incomplete safety and contact choices saved privately. You can return to finish them later.';
       setSavedMessage(confirmation);
-      Alert.alert('Draft saved', confirmation, finishStep ? [
+      showDialog('Draft saved', confirmation, finishStep ? [
         { text: 'Continue to review', onPress: () => navigation.navigate('MissingPreview', { animalId, reportId }) },
         { text: 'Keep editing', style: 'cancel' }
       ] : [

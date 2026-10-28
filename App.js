@@ -8,6 +8,7 @@ import { Nunito_700Bold } from '@expo-google-fonts/nunito/700Bold';
 import { Nunito_800ExtraBold } from '@expo-google-fonts/nunito/800ExtraBold';
 
 import { AppErrorBoundary } from './src/components/AppErrorBoundary';
+import { AppDialogProvider } from './src/components/AppDialog';
 import { LoadingScreen } from './src/components/LoadingScreen';
 import { SessionProvider } from './src/context/SessionContext';
 import { RootNavigator } from './src/navigation/RootNavigator';
@@ -37,7 +38,9 @@ export default function App() {
     <AppErrorBoundary>
       <StatusBar style="dark" backgroundColor={colors.background} />
       <SessionProvider>
-        <RootNavigator />
+        <AppDialogProvider>
+          <RootNavigator />
+        </AppDialogProvider>
       </SessionProvider>
     </AppErrorBoundary>
   );

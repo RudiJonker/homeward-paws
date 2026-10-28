@@ -1,9 +1,10 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { usePreventRemove } from '@react-navigation/native';
 import { useRef, useState } from 'react';
-import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
+import { useAppDialog } from '../../components/AppDialog';
 import { ScreenContainer } from '../../components/ScreenContainer';
 import { FormField } from '../../components/forms/FormField';
 import { SOUTH_AFRICAN_PROVINCES } from '../../config/constants';
@@ -38,6 +39,7 @@ function validate(updateType, note, area) {
 }
 
 export function AddMissingUpdateScreen({ navigation, route }) {
+  const { showDialog } = useAppDialog();
   const { reportId, reference } = route.params;
   const [updateType, setUpdateType] = useState('search_note');
   const [note, setNote] = useState('');
@@ -51,7 +53,7 @@ export function AddMissingUpdateScreen({ navigation, route }) {
   const inFlight = useRef(false);
 
   usePreventRemove(dirty, ({ data }) => {
-    Alert.alert('Leave this update?', retryOnly
+    showDialog('Leave this update?', retryOnly
       ? 'We could not confirm whether it was published. Leaving loses this retry. Check the case timeline before sending a new update.'
       : 'This unsent update will be lost. Your existing case stays unchanged.', [
       { text: 'Keep editing', style: 'cancel' },
@@ -92,7 +94,7 @@ export function AddMissingUpdateScreen({ navigation, route }) {
     try {
       await addMissingOwnerUpdate(reportId, updateType, note.trim(), publicArea, requestKey.current);
       setDirty(false);
-      Alert.alert('Update published', 'Your update is now on the public case timeline.', [
+      showDialog('Update published', 'Your update is now on the public case timeline.', [
         { text: 'View timeline', onPress: () => navigation.goBack() }
       ]);
     } catch (saveError) {
@@ -116,7 +118,7 @@ export function AddMissingUpdateScreen({ navigation, route }) {
       setError('Please correct the highlighted details. Nothing has been published.');
       return;
     }
-    Alert.alert('Publish this update?', 'It will be visible to anyone viewing this report. Check that it contains no house number, exact location, private phone number or identifying details.', [
+    showDialog('Publish this update?', 'It will be visible to anyone viewing this report. Check that it contains no house number, exact location, private phone number or identifying details.', [
       { text: 'Review again', style: 'cancel' },
       { text: 'Publish update', onPress: submit }
     ]);

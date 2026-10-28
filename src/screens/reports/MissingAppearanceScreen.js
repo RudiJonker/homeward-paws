@@ -1,9 +1,10 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useFocusEffect, usePreventRemove } from '@react-navigation/native';
 import { useCallback, useRef, useState } from 'react';
-import { Alert, Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
+import { useAppDialog } from '../../components/AppDialog';
 import { ScreenContainer } from '../../components/ScreenContainer';
 import { FormField } from '../../components/forms/FormField';
 import { ANIMAL_PLACEHOLDERS, animalCategoryLabel } from '../../config/animals';
@@ -13,6 +14,7 @@ import { colors, radii, shadows, spacing, typography } from '../../theme';
 import { selectedMissingPhotos } from '../../utils/missingPreview';
 
 export function MissingAppearanceScreen({ navigation, route }) {
+  const { showDialog } = useAppDialog();
   const { animalId, reportId } = route.params;
   const [animal, setAnimal] = useState(null);
   const [draft, setDraft] = useState(null);
@@ -70,7 +72,7 @@ export function MissingAppearanceScreen({ navigation, route }) {
       navigation.dispatch(data.action);
       return;
     }
-    Alert.alert('Leave without saving?', 'Your changes on this screen will be lost. The last saved draft will remain private.', [
+    showDialog('Leave without saving?', 'Your changes on this screen will be lost. The last saved draft will remain private.', [
       { text: 'Keep editing', style: 'cancel' },
       { text: 'Leave', style: 'destructive', onPress: () => navigation.dispatch(data.action) }
     ]);
@@ -127,7 +129,7 @@ export function MissingAppearanceScreen({ navigation, route }) {
   }
 
   function confirmDelete() {
-    Alert.alert('Delete private draft?', 'This permanently removes the unfinished missing report. Your animal profile and photos will remain.', [
+    showDialog('Delete private draft?', 'This permanently removes the unfinished missing report. Your animal profile and photos will remain.', [
       { text: 'Keep draft', style: 'cancel' },
       { text: 'Delete draft', style: 'destructive', onPress: async () => {
         setBusy(true);

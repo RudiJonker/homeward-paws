@@ -1,9 +1,10 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback, useState } from 'react';
-import { Alert, Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
+import { useAppDialog } from '../../components/AppDialog';
 import { ScreenContainer } from '../../components/ScreenContainer';
 import { ANIMAL_PLACEHOLDERS } from '../../config/animals';
 import { MISSING_BROWSE_ENABLED } from '../../config/checkpoint3';
@@ -28,6 +29,7 @@ function endedDate(value) {
 }
 
 export function MyReportsScreen({ navigation }) {
+  const { showDialog } = useAppDialog();
   const { session } = useSession();
   const ownerId = session?.user?.id;
   const [drafts, setDrafts] = useState([]);
@@ -72,7 +74,7 @@ export function MyReportsScreen({ navigation }) {
   function confirmDelete(draft) {
     if (deletingId) return;
     const name = animalsById[draft.animal_id]?.name ?? 'this animal';
-    Alert.alert('Delete private draft?', `The unfinished missing report for ${name} will be removed. The animal profile will stay.`, [
+    showDialog('Delete private draft?', `The unfinished missing report for ${name} will be removed. The animal profile will stay.`, [
       { text: 'Keep draft', style: 'cancel' },
       {
         text: 'Delete draft',

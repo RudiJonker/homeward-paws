@@ -2,9 +2,10 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { usePreventRemove } from '@react-navigation/native';
 import * as Location from 'expo-location';
 import { useRef, useState } from 'react';
-import { Alert, Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
+import { useAppDialog } from '../../components/AppDialog';
 import { ScreenContainer } from '../../components/ScreenContainer';
 import { DateTimeField } from '../../components/forms/DateTimeField';
 import { FormField } from '../../components/forms/FormField';
@@ -22,6 +23,7 @@ function Choice({ label, selected, onPress }) {
 }
 
 export function LinkedSightingScreen({ navigation, route }) {
+  const { showDialog } = useAppDialog();
   const { reportId, animalName, lastSeenAt } = route.params;
   const { privateProfile, session } = useSession();
   const [values, setValues] = useState(blankLinkedSighting);
@@ -39,7 +41,7 @@ export function LinkedSightingScreen({ navigation, route }) {
   const submitting = useRef(false);
 
   usePreventRemove((dirty || (savedSightingId && photoUri)) && !submittedId, ({ data }) => {
-    Alert.alert('Leave this sighting?', savedSightingId
+    showDialog('Leave this sighting?', savedSightingId
       ? 'The sighting is saved, but its photo has not been attached. Leaving will discard this photo retry.'
       : 'Your unsent details will be lost.', [
       { text: 'Keep editing', style: 'cancel' },
@@ -69,7 +71,7 @@ export function LinkedSightingScreen({ navigation, route }) {
   }
 
   function confirmCurrentPlace() {
-    Alert.alert('Share this exact place with the owner?', 'Only the missing-report owner and authorised administrators can see the device point. Public Browse will not show it. Use this only if you are where you saw the animal.', [
+    showDialog('Share this exact place with the owner?', 'Only the missing-report owner and authorised administrators can see the device point. Public Browse will not show it. Use this only if you are where you saw the animal.', [
       { text: 'Enter area manually', style: 'cancel' },
       { text: 'Use my current place', onPress: captureCurrentPlace }
     ]);

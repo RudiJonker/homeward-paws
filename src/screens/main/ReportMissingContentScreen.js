@@ -1,9 +1,10 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useFocusEffect, usePreventRemove } from '@react-navigation/native';
 import { useCallback, useRef, useState } from 'react';
-import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
+import { useAppDialog } from '../../components/AppDialog';
 import { ScreenContainer } from '../../components/ScreenContainer';
 import { FormField } from '../../components/forms/FormField';
 import { CONTENT_REPORT_REASONS } from '../../config/contentReportReasons';
@@ -12,6 +13,7 @@ import { getPublicMissingReport } from '../../services/missingReportService';
 import { colors, radii, spacing, typography } from '../../theme';
 
 export function ReportMissingContentScreen({ navigation, route }) {
+  const { showDialog } = useAppDialog();
   const { reportId, photoPath = null, reference } = route.params;
   const [report, setReport] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -44,7 +46,7 @@ export function ReportMissingContentScreen({ navigation, route }) {
 
   useFocusEffect(useCallback(() => { load(); }, [load]));
   usePreventRemove(dirty && !submitted, ({ data }) => {
-    Alert.alert('Leave this report?', 'Your unsent concern will be lost.', [
+    showDialog('Leave this report?', 'Your unsent concern will be lost.', [
       { text: 'Keep editing', style: 'cancel' },
       { text: 'Leave', style: 'destructive', onPress: () => navigation.dispatch(data.action) }
     ]);

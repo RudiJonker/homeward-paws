@@ -1,9 +1,10 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useFocusEffect, usePreventRemove } from '@react-navigation/native';
 import { useCallback, useRef, useState } from 'react';
-import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
+import { useAppDialog } from '../../components/AppDialog';
 import { ScreenContainer } from '../../components/ScreenContainer';
 import { FormField } from '../../components/forms/FormField';
 import { MISSING_CLOSURE_REASONS } from '../../config/missingClosureReasons';
@@ -11,6 +12,7 @@ import { closeMissingReport, getMyMissingReportStatus } from '../../services/mis
 import { colors, radii, spacing, typography } from '../../theme';
 
 export function CloseMissingReportScreen({ navigation, route }) {
+  const { showDialog } = useAppDialog();
   const { reportId, reference } = route.params;
   const [report, setReport] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -39,7 +41,7 @@ export function CloseMissingReportScreen({ navigation, route }) {
   useFocusEffect(useCallback(() => { load(); }, [load]));
 
   usePreventRemove(dirty, ({ data }) => {
-    Alert.alert('Leave closure details?', retryOnly
+    showDialog('Leave closure details?', retryOnly
       ? 'We could not confirm whether the alert was closed. Check My Reports before starting again.'
       : 'These unsaved details will be lost. The missing alert will stay active.', [
       { text: 'Stay here', style: 'cancel' },
@@ -64,7 +66,7 @@ export function CloseMissingReportScreen({ navigation, route }) {
         animalSafeConfirmed
       }, requestKey.current);
       setDirty(false);
-      Alert.alert('Alert closed', animalSafeConfirmed
+      showDialog('Alert closed', animalSafeConfirmed
         ? 'The public alert has ended. You confirmed the animal is safe; this is not recorded as a reunion.'
         : 'The public alert has ended. Your animal remains marked MISSING. The private case file is available in My Reports.', [
         { text: 'View My Reports', onPress: () => navigation.popTo('MyReports') }
@@ -89,7 +91,7 @@ export function CloseMissingReportScreen({ navigation, route }) {
       setSaveError('Choose why you are closing this alert.');
       return;
     }
-    Alert.alert('Close this missing alert?', animalSafeConfirmed
+    showDialog('Close this missing alert?', animalSafeConfirmed
       ? 'This removes the alert from public Browse and marks the animal SAFE because you explicitly confirmed that this report was incorrect. It will not be called a reunion.'
       : 'This removes the alert from public Browse. The animal will still be marked MISSING, and the case file will remain in My Reports. Closing does not mean the animal was found.', [
       { text: 'Keep alert active', style: 'cancel' },

@@ -134,6 +134,7 @@ Elevation is soft and warm: low-opacity navy shadows, never harsh black. Define 
 - `IconTile`: a circular tinted tile with an icon, using `primaryLight`, `accentLight`, `highlightLight` or a status `tint`. Used for feature lists, "How it works" steps, urgent action cards and empty states.
 - `HeroCard`: a rounded `xl` card with a photo or illustration and warm text, used on Home and Welcome. See §8.
 - The centre Report tab uses the same standard icon treatment as the other tabs, with MaterialCommunityIcons `plus-circle-outline` and the accessibility label "Report an animal".
+- App-owned confirmations and notices use the shared themed dialog: white raised card, Nunito text, status icon, teal primary action, red destructive action and a clear secondary cancel choice. Android Back dismisses without taking the action. Operating-system permission prompts and photo pickers retain their system appearance.
 
 ### Forms
 

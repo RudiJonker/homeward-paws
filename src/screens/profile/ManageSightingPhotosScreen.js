@@ -1,9 +1,10 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback, useRef, useState } from 'react';
-import { Alert, Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
+import { useAppDialog } from '../../components/AppDialog';
 import { ScreenContainer } from '../../components/ScreenContainer';
 import { useSession } from '../../context/SessionContext';
 import { listMyLinkedSightingPhotos, removeLinkedSightingPhoto } from '../../services/linkedSightingService';
@@ -24,6 +25,7 @@ function observedDate(value) {
 }
 
 export function ManageSightingPhotosScreen() {
+  const { showDialog } = useAppDialog();
   const { session } = useSession();
   const contributorId = session?.user?.id;
   const [photos, setPhotos] = useState([]);
@@ -73,7 +75,7 @@ export function ManageSightingPhotosScreen() {
   }
 
   function confirmRemove(photo) {
-    Alert.alert('Remove this sighting photo?', 'The photo will be deleted. Your observation and the owner’s review will stay in the private case history.', [
+    showDialog('Remove this sighting photo?', 'The photo will be deleted. Your observation and the owner’s review will stay in the private case history.', [
       { text: 'Keep photo', style: 'cancel' },
       { text: 'Remove photo', style: 'destructive', onPress: () => remove(photo) }
     ]);

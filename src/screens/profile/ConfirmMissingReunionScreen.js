@@ -1,9 +1,10 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useFocusEffect, usePreventRemove } from '@react-navigation/native';
 import { useCallback, useRef, useState } from 'react';
-import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
+import { useAppDialog } from '../../components/AppDialog';
 import { ScreenContainer } from '../../components/ScreenContainer';
 import { DateTimeField } from '../../components/forms/DateTimeField';
 import { FormField } from '../../components/forms/FormField';
@@ -22,6 +23,7 @@ function pickedReunionTime(dateValue, timeValue, lastSeenAt) {
 }
 
 export function ConfirmMissingReunionScreen({ navigation, route }) {
+  const { showDialog } = useAppDialog();
   const { reportId, reference } = route.params;
   const [context, setContext] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -56,7 +58,7 @@ export function ConfirmMissingReunionScreen({ navigation, route }) {
   useFocusEffect(useCallback(() => { load(); }, [load]));
 
   usePreventRemove(dirty, ({ data }) => {
-    Alert.alert('Leave reunion details?', retryOnly
+    showDialog('Leave reunion details?', retryOnly
       ? 'We could not confirm whether the reunion was saved. Check My Reports before starting again.'
       : 'These unsaved details will be lost. The missing alert will stay active.', [
       { text: 'Stay here', style: 'cancel' },
@@ -95,7 +97,7 @@ export function ConfirmMissingReunionScreen({ navigation, route }) {
         publicStoryConsent
       }, requestKey.current);
       setDirty(false);
-      Alert.alert('Reunion confirmed', 'The missing alert has ended and the animal profile is SAFE. The reunion place and assistance details stay private.', [
+      showDialog('Reunion confirmed', 'The missing alert has ended and the animal profile is SAFE. The reunion place and assistance details stay private.', [
         { text: 'View My Reports', onPress: () => navigation.popTo('MyReports') }
       ]);
     } catch (error) {
@@ -120,7 +122,7 @@ export function ConfirmMissingReunionScreen({ navigation, route }) {
       setSaveError('Please correct the highlighted details. The alert is still active.');
       return;
     }
-    Alert.alert('End the missing alert?', 'Only confirm this when the animal is back in safe care. This marks the report REUNITED, stops new sightings and returns the animal profile to SAFE.', [
+    showDialog('End the missing alert?', 'Only confirm this when the animal is back in safe care. This marks the report REUNITED, stops new sightings and returns the animal profile to SAFE.', [
       { text: 'Keep alert active', style: 'cancel' },
       { text: 'Confirm reunion', onPress: submit }
     ]);

@@ -1,9 +1,10 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useFocusEffect, usePreventRemove } from '@react-navigation/native';
 import { useCallback, useRef, useState } from 'react';
-import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
+import { useAppDialog } from '../../components/AppDialog';
 import { ScreenContainer } from '../../components/ScreenContainer';
 import { DateTimeField } from '../../components/forms/DateTimeField';
 import { FormField } from '../../components/forms/FormField';
@@ -17,6 +18,7 @@ const blankDetails = {
 };
 
 export function MissingLastSeenScreen({ navigation, route }) {
+  const { showDialog } = useAppDialog();
   const { animalId, reportId } = route.params;
   const [details, setDetails] = useState(blankDetails);
   const [errors, setErrors] = useState({});
@@ -63,7 +65,7 @@ export function MissingLastSeenScreen({ navigation, route }) {
   }, [load]));
 
   usePreventRemove(dirty, ({ data }) => {
-    Alert.alert('Leave without saving?', 'Your changes on this screen will be lost. Your last saved private draft will remain.', [
+    showDialog('Leave without saving?', 'Your changes on this screen will be lost. Your last saved private draft will remain.', [
       { text: 'Keep editing', style: 'cancel' },
       { text: 'Leave', style: 'destructive', onPress: () => navigation.dispatch(data.action) }
     ]);
@@ -126,7 +128,7 @@ export function MissingLastSeenScreen({ navigation, route }) {
       if (finishStep) {
         navigation.navigate('MissingLastSeenLocation', { animalId, reportId });
       } else {
-        Alert.alert('Draft saved', message, [
+        showDialog('Draft saved', message, [
           { text: 'Keep editing', style: 'cancel' },
           { text: 'Back to Report', onPress: () => navigation.popTo('ReportMenu') }
         ]);

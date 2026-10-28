@@ -1,9 +1,10 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useCallback, useState } from 'react';
-import { Alert, Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
+import { useAppDialog } from '../../components/AppDialog';
 import { ScreenContainer } from '../../components/ScreenContainer';
 import { ANIMAL_PLACEHOLDERS, animalCategoryLabel, animalHealthFlagLabel } from '../../config/animals';
 import { animalStatusAppearance } from '../../config/animalStatus';
@@ -13,6 +14,7 @@ import { chooseAnimalPhoto, deleteAnimalProfile, getAnimalProfile, removeAnimalP
 import { colors, radii, spacing, typography } from '../../theme';
 
 export function AnimalDetailScreen({ navigation, route }) {
+  const { showDialog } = useAppDialog();
   const { animalId } = route.params;
   const { session } = useSession();
   const [animal, setAnimal] = useState(null);
@@ -39,7 +41,7 @@ export function AnimalDetailScreen({ navigation, route }) {
   }
 
   function confirmDeleteAnimal() {
-    Alert.alert(
+    showDialog(
       'Permanently delete animal?',
       'This permanently removes this animal profile, its photos, private details and any unfinished missing report draft. This cannot be undone.',
       [
@@ -89,7 +91,7 @@ export function AnimalDetailScreen({ navigation, route }) {
   }
 
   function confirmRemovePhoto(photo) {
-    Alert.alert('Remove photo?', 'This photo will be permanently removed from the animal profile.', [
+    showDialog('Remove photo?', 'This photo will be permanently removed from the animal profile.', [
       { text: 'Cancel', style: 'cancel' },
       { text: 'Remove photo', style: 'destructive', onPress: async () => {
         setBusy(true); setError('');

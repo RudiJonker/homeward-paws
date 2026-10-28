@@ -1,8 +1,9 @@
 import * as Location from 'expo-location';
 import { useState } from 'react';
-import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { FormField } from '../../components/forms/FormField';
+import { useAppDialog } from '../../components/AppDialog';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { ScreenContainer } from '../../components/ScreenContainer';
 import { SOUTH_AFRICAN_PROVINCES } from '../../config/constants';
@@ -12,6 +13,7 @@ import { colors, radii, spacing, typography } from '../../theme';
 import { deviceAccuracyMessage, suggestGeocodedArea } from '../../utils/geocodedArea';
 
 export function SetHomeAreaScreen({ navigation }) {
+  const { showDialog } = useAppDialog();
   const { profile, privateProfile, refreshProfile } = useSession();
   const editing = Boolean(profile?.profile_completed);
   const [province, setProvince] = useState(privateProfile?.province ?? '');
@@ -61,7 +63,7 @@ export function SetHomeAreaScreen({ navigation }) {
       });
       if (error) throw error;
       await refreshProfile();
-      if (editing) Alert.alert('Home area saved', 'Your updated area is private.', [{ text: 'Done', onPress: () => navigation.goBack() }]);
+      if (editing) showDialog('Home area saved', 'Your updated area is private.', [{ text: 'Done', onPress: () => navigation.goBack() }]);
     } catch (error) {
       setMessage(`Could not save your home area. Check your connection and try again. ${error.message}`);
     } finally {

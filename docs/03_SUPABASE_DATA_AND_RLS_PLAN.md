@@ -31,6 +31,14 @@ New-user trigger defaults:
 
 Client cannot modify role or account status.
 
+During the private beta, the password-protected project dashboard may compare
+beta sign-ups with app accounts using `admin_member_directory()`. The function
+returns only first name, email, account creation time and email-confirmed status.
+It checks the caller's active admin role in the database; ordinary members and
+anonymous visitors cannot list accounts. Admin roles are assigned only after
+the relevant members create their accounts, through a controlled server-side
+change. This does not make account email addresses public.
+
 ### `profile_private`
 
 `user_id`, E.164 mobile, WhatsApp preference, country, province, city, suburb, coordinates, location source and timestamps.

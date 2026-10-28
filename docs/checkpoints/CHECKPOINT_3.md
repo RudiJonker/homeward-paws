@@ -4,7 +4,8 @@
 
 - **Two-phone owner/contributor flow: passed**, confirmed by Rudi. Andre sighted Rudi's TEST dog and Rudi confirmed reunion. A third tester sighted Andre's TEST dog Tuckshop (`HP-M-BCE56148C4`); Andre reviewed the sighting, confirmed reunion, and the animal returned to SAFE. Andre also sighted the third tester's cat (`HP-M-6981492143`), and that owner completed reunion. These runs covered both owner and contributor roles on separate phones and a second animal type.
 - An owner search update was published and seen in the public and owner timelines on 26 October, but was not part of the 28 October two-phone runs. Repeat it during the next TEST concern run so the full roadmap sequence is covered together.
-- **Still open:** a TEST content concern with duplicate-submission check and read-only database confirmation; deletion of a disposable account with report and sighting photos, followed by table and Storage checks. Keep the standard Checkpoint 3 feature gate off until these pass and the privacy gaps below are resolved. Older Progress entries retain the status observed on their stated dates.
+- **TEST content concern: passed.** Report `HP-M-55D41956DE` received one alert concern and two concerns about the same photo from different test accounts, all with reason `inaccurate` and status `submitted`. Rudi repeated the same photo concern from the same account; a read-only SQL Editor query still returned the same three row IDs and creation times, confirming no duplicate row was added. The app displayed its private success state.
+- **Still open:** deletion of a disposable account with report and sighting photos, followed by table and Storage checks. Keep the standard Checkpoint 3 feature gate off until this passes and the privacy gaps below are resolved. Older Progress entries retain the status observed on their stated dates.
 
 ## Progress
 

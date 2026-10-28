@@ -25,6 +25,6 @@ return [
     // ---- Storage and abuse limits ----
     // Sign-ups are saved as CSV OUTSIDE public_html where possible
     // (public_html/../paws-private/). Leave empty for that default.
-    'data_dir'      => '',
+    'data_dir'      => '/usr/home/digitqseyn/paws-private',
     'max_per_ip_per_hour' => 5,
 ];

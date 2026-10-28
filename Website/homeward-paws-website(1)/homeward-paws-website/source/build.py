@@ -10,7 +10,7 @@ followed by the <main> content.
 import pathlib, re
 
 SRC = pathlib.Path(__file__).parent / "src"
-OUT = pathlib.Path("/home/claude/hp-site")
+OUT = pathlib.Path(__file__).parent.parent / "site"
 DOMAIN = "https://homewardpaws.co.za/"
 
 HEAD = """<!doctype html>

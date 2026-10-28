@@ -1,7 +1,7 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback, useRef, useState } from 'react';
-import { Image, Linking, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Alert, Image, Linking, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { ScreenContainer } from '../../components/ScreenContainer';
@@ -36,7 +36,7 @@ function SightingPhoto({ url }) {
     : <Image source={{ uri: url }} style={styles.sightingPhoto} onError={() => setFailed(true)} accessibilityLabel="Private sighting photo" />;
 }
 
-export function OwnerMissingSightingsScreen({ route }) {
+export function OwnerMissingSightingsScreen({ navigation, route }) {
   const { reportId, reference } = route.params;
   const [sightings, setSightings] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -73,6 +73,14 @@ export function OwnerMissingSightingsScreen({ route }) {
       await reviewLinkedSighting(sighting.id, decision);
       setSightings((current) => current.map((row) => row.id === sighting.id ? { ...row, review_status: decision } : row));
       setNotice('Your assessment was saved. A sighting is a clue, not proof of identity.');
+      Alert.alert(
+        'Assessment saved',
+        'You can keep reviewing sightings or return to My Reports to manage this case.',
+        [
+          { text: 'Keep reviewing', style: 'cancel' },
+          { text: 'My Reports', onPress: () => navigation.navigate('MyReports') }
+        ]
+      );
     } catch {
       setError('Could not save your assessment. Check your connection and try again.');
     } finally {
@@ -112,7 +120,11 @@ export function OwnerMissingSightingsScreen({ route }) {
       <Text style={styles.reviewHeading}>Your assessment</Text>
       <View style={styles.reviewOptions}>{REVIEW_OPTIONS.map(([code, label]) => <Pressable key={code} accessibilityRole="button" accessibilityState={{ selected: sighting.review_status === code, disabled: busyId === sighting.id }} disabled={busyId === sighting.id} onPress={() => review(sighting, code)} style={[styles.reviewButton, sighting.review_status === code && styles.reviewSelected]}><Text style={[styles.reviewButtonText, sighting.review_status === code && styles.reviewSelectedText]}>{label}</Text></Pressable>)}</View>
     </View>)}
-    {!loading && sightings.length ? <Pressable accessibilityRole="button" onPress={load} style={styles.refresh}><Text style={styles.link}>Refresh sightings</Text></Pressable> : null}
+    {!loading && sightings.length ? <View style={styles.finishArea}>
+      <Text style={styles.finishNote}>Finished reviewing? Return to My Reports to manage this case. If your animal is safely home, confirm reunion there.</Text>
+      <PrimaryButton label="Done reviewing" onPress={() => navigation.navigate('MyReports')} disabled={Boolean(busyId)} />
+      <Pressable accessibilityRole="button" onPress={load} style={styles.refresh}><Text style={styles.link}>Refresh sightings</Text></Pressable>
+    </View> : null}
   </ScreenContainer>;
 }
 
@@ -141,6 +153,8 @@ const styles = StyleSheet.create({
   reviewSelected: { borderColor: colors.primary, backgroundColor: colors.primaryLight },
   reviewButtonText: { ...typography.caption, color: colors.textPrimary },
   reviewSelectedText: { color: colors.primaryDark },
+  finishArea: { gap: spacing.md, marginTop: spacing.sm },
+  finishNote: { ...typography.body, color: colors.textSecondary },
   refresh: { minHeight: 48, alignItems: 'center', justifyContent: 'center' },
   sightingPhoto: { width: '100%', height: 220, borderRadius: radii.md },
   link: { ...typography.bodyStrong, color: colors.primary }

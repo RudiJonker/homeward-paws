@@ -1,12 +1,12 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback, useRef, useState } from 'react';
-import { Alert, Image, Linking, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Linking, Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { ScreenContainer } from '../../components/ScreenContainer';
 import { listOwnerMissingSightings, reviewLinkedSighting } from '../../services/linkedSightingService';
-import { colors, radii, spacing, typography } from '../../theme';
+import { colors, radii, shadows, spacing, typography } from '../../theme';
 import { SIGHTING_CONDITIONS, SIGHTING_MOVEMENTS } from '../../utils/linkedSighting';
 
 const REVIEW_OPTIONS = [
@@ -43,6 +43,7 @@ export function OwnerMissingSightingsScreen({ navigation, route }) {
   const [busyId, setBusyId] = useState(null);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
+  const [confirmationVisible, setConfirmationVisible] = useState(false);
   const requestId = useRef(0);
 
   const load = useCallback(async () => {
@@ -73,14 +74,7 @@ export function OwnerMissingSightingsScreen({ navigation, route }) {
       await reviewLinkedSighting(sighting.id, decision);
       setSightings((current) => current.map((row) => row.id === sighting.id ? { ...row, review_status: decision } : row));
       setNotice('Your assessment was saved. A sighting is a clue, not proof of identity.');
-      Alert.alert(
-        'Assessment saved',
-        'You can keep reviewing sightings or return to My Reports to manage this case.',
-        [
-          { text: 'Keep reviewing', style: 'cancel' },
-          { text: 'My Reports', onPress: () => navigation.navigate('MyReports') }
-        ]
-      );
+      setConfirmationVisible(true);
     } catch {
       setError('Could not save your assessment. Check your connection and try again.');
     } finally {
@@ -94,7 +88,13 @@ export function OwnerMissingSightingsScreen({ navigation, route }) {
     catch { setError('Could not open the phone app on this device.'); }
   }
 
-  return <ScreenContainer>
+  function finishReview() {
+    setConfirmationVisible(false);
+    navigation.navigate('MyReports');
+  }
+
+  return <>
+  <ScreenContainer>
     <Text style={styles.title}>Sightings for your report</Text>
     <Text style={styles.subtitle}>Reference {reference}. These observations are private to you, each contributor and authorised administrators. Review them as clues; only people can confirm identity.</Text>
     {loading ? <Text style={styles.message}>Loading sightings…</Text> : null}
@@ -122,10 +122,22 @@ export function OwnerMissingSightingsScreen({ navigation, route }) {
     </View>)}
     {!loading && sightings.length ? <View style={styles.finishArea}>
       <Text style={styles.finishNote}>Finished reviewing? Return to My Reports to manage this case. If your animal is safely home, confirm reunion there.</Text>
-      <PrimaryButton label="Done reviewing" onPress={() => navigation.navigate('MyReports')} disabled={Boolean(busyId)} />
+      <PrimaryButton label="Done reviewing" onPress={finishReview} disabled={Boolean(busyId)} />
       <Pressable accessibilityRole="button" onPress={load} style={styles.refresh}><Text style={styles.link}>Refresh sightings</Text></Pressable>
     </View> : null}
-  </ScreenContainer>;
+  </ScreenContainer>
+  <Modal visible={confirmationVisible} transparent animationType="fade" onRequestClose={() => setConfirmationVisible(false)}>
+    <View style={styles.modalOverlay}>
+      <View style={styles.modalCard} accessibilityViewIsModal>
+        <View style={styles.modalIcon}><MaterialCommunityIcons name="check" size={30} color={colors.primaryDark} /></View>
+        <Text accessibilityRole="header" style={styles.modalTitle}>Assessment saved</Text>
+        <Text style={styles.modalBody}>Your choice was saved privately. Keep reviewing sightings, or return to My Reports to manage this case.</Text>
+        <PrimaryButton label="Go to My Reports" onPress={finishReview} />
+        <Pressable accessibilityRole="button" onPress={() => setConfirmationVisible(false)} style={styles.modalSecondary}><Text style={styles.modalSecondaryText}>Keep reviewing</Text></Pressable>
+      </View>
+    </View>
+  </Modal>
+  </>;
 }
 
 const styles = StyleSheet.create({
@@ -157,5 +169,12 @@ const styles = StyleSheet.create({
   finishNote: { ...typography.body, color: colors.textSecondary },
   refresh: { minHeight: 48, alignItems: 'center', justifyContent: 'center' },
   sightingPhoto: { width: '100%', height: 220, borderRadius: radii.md },
-  link: { ...typography.bodyStrong, color: colors.primary }
+  link: { ...typography.bodyStrong, color: colors.primary },
+  modalOverlay: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: spacing.xl, backgroundColor: colors.overlay },
+  modalCard: { width: '100%', maxWidth: 380, gap: spacing.lg, padding: spacing.xxl, borderRadius: radii.xl, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.surface, ...shadows.raised },
+  modalIcon: { width: 56, height: 56, borderRadius: radii.pill, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.primaryLight },
+  modalTitle: { ...typography.screenTitle, color: colors.textPrimary },
+  modalBody: { ...typography.body, color: colors.textSecondary, marginBottom: spacing.sm },
+  modalSecondary: { minHeight: 48, justifyContent: 'center', alignItems: 'center' },
+  modalSecondaryText: { ...typography.button, color: colors.primary }
 });

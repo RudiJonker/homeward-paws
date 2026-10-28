@@ -10,6 +10,7 @@ export const colors = {
   background: '#FBF7F2',
   surface: '#FFFFFF',
   surfaceMuted: '#F5EFE7',
+  overlay: 'rgba(31, 45, 61, 0.48)',
   textPrimary: '#1F2D3D',
   textSecondary: '#5E6B78',
   textOnPrimary: '#FFFFFF',

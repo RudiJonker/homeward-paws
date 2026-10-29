@@ -159,6 +159,13 @@ Public queries must return only the permitted precision. Distance search may lat
 
 For every public incident report, `Exact` is forbidden as a public precision. The public projection may include only a general area or an explicitly chosen street/public-landmark name without a house number; found-animal current whereabouts stay at general-area level. Private coordinates must never be returned through public report queries or used as the position of a public map pin. Enforce this in the publication function and public read surface, not only in the mobile UI. `Exact` remains usable only for private location records.
 
+The public `nearby.html` page uses a separate missing-report RPC that returns
+only the fields that page renders. It must omit reporter name, phone, WhatsApp,
+email, report/account IDs and private coordinates from the network response.
+The app's existing public report RPC continues to expose only the reporter's
+explicitly opted-in contact options. Anonymous visitors have no direct table
+read grant on `profiles`, `profile_private` or report-location rows.
+
 ## 6. Case History and Relationships
 
 ### `case_events`

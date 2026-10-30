@@ -67,6 +67,8 @@ eas build -p android --profile preview   # APK at agreed milestones only
 supabase db reset && supabase test db    # migrations + RLS tests (Checkpoint 1+)
 ```
 
+For hosted Supabase CLI commands on this Windows machine, use `scripts/supabase-hp.ps1` after the one-time setup in `docs/SUPABASE_CLI_ACCESS.md`. It checks the linked project and scoped token before running a command; raw `npx supabase` has resolved different saved accounts in interactive and agent processes. Never place a Management API token in the repository or command arguments.
+
 ## Definition of done for any task
 
 - Lint, `expo install --check` and `expo-doctor` clean

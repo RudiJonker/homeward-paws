@@ -7,7 +7,6 @@ import { PrimaryButton } from '../../components/PrimaryButton';
 import { useAppDialog } from '../../components/AppDialog';
 import { ScreenContainer } from '../../components/ScreenContainer';
 import { FormField } from '../../components/forms/FormField';
-import { useSession } from '../../context/SessionContext';
 import { getMissingDraft, saveMissingDraft } from '../../services/missingReportService';
 import { colors, radii, spacing, typography } from '../../theme';
 import { APPROACH_OPTIONS, URGENCY_OPTIONS, blankMissingSafetyContact, restoreMissingSafetyContact, validateMissingSafetyContact } from '../../utils/missingSafetyContact';
@@ -24,7 +23,6 @@ function ChoiceRow({ label, checked, onPress, disabled = false, single = false }
 export function MissingSafetyContactScreen({ navigation, route }) {
   const { showDialog } = useAppDialog();
   const { animalId, reportId } = route.params;
-  const { privateProfile } = useSession();
   const [values, setValues] = useState(blankMissingSafetyContact);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(true);
@@ -35,8 +33,6 @@ export function MissingSafetyContactScreen({ navigation, route }) {
   const [savedMessage, setSavedMessage] = useState('');
   const loadedOnce = useRef(false);
 
-  const hasMobile = Boolean(privateProfile?.mobile_e164);
-  const hasWhatsapp = hasMobile && privateProfile?.whatsapp_enabled === true;
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -80,17 +76,9 @@ export function MissingSafetyContactScreen({ navigation, route }) {
     setSavedMessage('');
   }
 
-  function updateContact(field) {
-    setValues((current) => ({ ...current, contact: { ...current.contact, [field]: !current.contact[field] } }));
-    setErrors((current) => ({ ...current, contact: undefined, [field]: undefined }));
-    setDirty(true);
-    setError('');
-    setSavedMessage('');
-  }
-
   async function save({ finishStep = false } = {}) {
     if (busy) return;
-    const validation = validateMissingSafetyContact(values, { hasMobile, hasWhatsapp });
+    const validation = validateMissingSafetyContact(values);
     if (finishStep && !validation.valid) {
       setErrors(validation.errors);
       setError('Please correct the highlighted choices, or save an incomplete draft for later.');
@@ -160,17 +148,9 @@ export function MissingSafetyContactScreen({ navigation, route }) {
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>How may people contact you?</Text>
-        <Text style={styles.hint}>At least one option is needed. Calls and WhatsApp are off unless you turn them on for this report.</Text>
-        <ChoiceRow label="Structured in-app response" checked={values.contact.inApp} disabled={busy} onPress={() => updateContact('inApp')} />
-        <ChoiceRow label="Phone call — show my profile number" checked={values.contact.phone} disabled={busy || (!hasMobile && !values.contact.phone)} onPress={() => updateContact('phone')} />
-        <ChoiceRow label="WhatsApp — show my profile number" checked={values.contact.whatsapp} disabled={busy || (!hasWhatsapp && !values.contact.whatsapp)} onPress={() => updateContact('whatsapp')} />
-        {!hasMobile ? <Text style={styles.hint}>Add a mobile number to your profile to offer calls or WhatsApp.</Text> : null}
-        {hasMobile && !hasWhatsapp ? <Text style={styles.hint}>Enable WhatsApp for your profile number before offering WhatsApp on this report.</Text> : null}
-        {errors.contact ? <Text style={styles.fieldError}>{errors.contact}</Text> : null}
-        {errors.phone ? <Text style={styles.fieldError}>{errors.phone}</Text> : null}
-        {errors.whatsapp ? <Text style={styles.fieldError}>{errors.whatsapp}</Text> : null}
-        <Text style={styles.privacy}>Your number is not copied into this draft. It would appear on the published report only for channels you enable and confirm in the final preview.</Text>
+        <Text style={styles.sectionTitle}>How can someone send you a sighting?</Text>
+        <Text style={styles.hint}>People can send you a private sighting in the app. Your phone number and WhatsApp are never shown on the public report.</Text>
+        <Text style={styles.privacy}>Open Homeward Paws to review new sightings. Phone notifications are not available yet.</Text>
       </View>
 
       {error ? <Text style={styles.error}>{error}</Text> : null}

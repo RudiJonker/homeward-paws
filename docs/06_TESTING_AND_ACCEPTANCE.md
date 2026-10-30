@@ -186,7 +186,7 @@ Use test-only animals and contact information.
 - Private profile location hidden
 - Exact current whereabouts hidden
 - Full identifiers hidden
-- Public contact appears only when enabled
+- Owner phone and WhatsApp never appear in public missing-report responses, even to signed-in members
 - Drafts private
 - Deleted/pending account handling
 

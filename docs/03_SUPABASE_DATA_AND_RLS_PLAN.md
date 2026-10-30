@@ -41,7 +41,7 @@ change. This does not make account email addresses public.
 
 ### `profile_private`
 
-`user_id`, E.164 mobile, WhatsApp preference, country, province, city, suburb, coordinates, location source and timestamps.
+`user_id`, country, province, city, suburb, coordinates, location source and timestamps. No profile mobile number or WhatsApp preference is stored. An optional contributor phone belongs only to the private sighting on which it was shared.
 
 ### `notification_preferences`
 
@@ -162,8 +162,7 @@ For every public incident report, `Exact` is forbidden as a public precision. Th
 The public `nearby.html` page uses a separate missing-report RPC that returns
 only the fields that page renders. It must omit reporter name, phone, WhatsApp,
 email, report/account IDs and private coordinates from the network response.
-The app's existing public report RPC continues to expose only the reporter's
-explicitly opted-in contact options. Anonymous visitors have no direct table
+The app's public missing-report RPC returns no owner phone or WhatsApp for any caller. Its legacy contact fields remain null for older app clients. Anonymous visitors have no direct table
 read grant on `profiles`, `profile_private` or report-location rows.
 
 ## 6. Case History and Relationships
@@ -381,10 +380,10 @@ Public access exposes only:
 - Public report images
 - Location at permitted precision
 - Public timeline events
-- Enabled contact actions
+- Private in-app sighting action
 - Public partner identity later
 
-It excludes phone numbers unless enabled, home/holding coordinates, microchip numbers, evidence, private events, moderation notes, device tokens and admin history.
+It excludes owner phone numbers and WhatsApp, home/holding coordinates, microchip numbers, evidence, private events, moderation notes, device tokens and admin history.
 
 ## 17. Data Lifecycle
 

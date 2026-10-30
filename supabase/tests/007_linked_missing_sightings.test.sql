@@ -1,6 +1,6 @@
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(36);
+select plan(38);
 
 create temporary table sighting_results (result text) on commit drop;
 grant select, insert on sighting_results to anon, authenticated, service_role;
@@ -41,8 +41,6 @@ update public.profiles set profile_completed = true where id in
    'c7000000-0000-0000-0000-000000000003');
 update public.profiles set role = 'admin', profile_completed = true
   where id = 'd7000000-0000-0000-0000-000000000004';
-update public.profile_private set mobile_e164 = '+27821234567'
-  where user_id = 'b7000000-0000-0000-0000-000000000002';
 insert into public.animals (id, owner_id, name, category, status)
 values ('e7000000-0000-0000-0000-000000000005',
   'a7000000-0000-0000-0000-000000000001', 'Nala', 'dog', 'missing');
@@ -94,6 +92,20 @@ insert into sighting_results select throws_ok(
       'city', 'Johannesburg', 'suburb', 'Melville', 'locationSource', 'device',
       'movement', 'moving', 'condition', 'unsure'), 'device-empty-0001')$$,
   '23514', null, 'device source requires a private point');
+insert into sighting_results select throws_ok(
+  $$select public.submit_missing_case_sighting('f7000000-0000-0000-0000-000000000006',
+    jsonb_build_object('observedAt', now() - interval '1 hour', 'province', 'Gauteng',
+      'city', 'Johannesburg', 'suburb', 'Melville', 'locationSource', 'manual',
+      'movement', 'moving', 'condition', 'appeared_well', 'sharePhone', true),
+      'phone-missing-0001')$$,
+  '23514', null, 'a phone sharing choice requires a valid number on this sighting');
+insert into sighting_results select throws_ok(
+  $$select public.submit_missing_case_sighting('f7000000-0000-0000-0000-000000000006',
+    jsonb_build_object('observedAt', now() - interval '1 hour', 'province', 'Gauteng',
+      'city', 'Johannesburg', 'suburb', 'Melville', 'locationSource', 'manual',
+      'movement', 'moving', 'condition', 'appeared_well', 'sharePhone', false,
+      'contactPhone', '+27821234567'), 'phone-no-consent-0001')$$,
+  '23514', null, 'phone cannot be stored without explicit sighting consent');
 insert into sighting_results select ok(
   public.submit_missing_case_sighting('f7000000-0000-0000-0000-000000000006',
     jsonb_build_object('observedAt', now() - interval '1 hour', 'province', 'Gauteng',
@@ -101,7 +113,8 @@ insert into sighting_results select ok(
       'locationSource', 'device', 'latitude', -26.175123, 'longitude', 28.001234,
       'accuracyMetres', 12, 'movement', 'moving', 'direction', 'Towards the park',
       'condition', 'appeared_well', 'stillVisible', false,
-      'notes', 'Brown collar', 'sharePhone', true), 'member-sighting-0001') is not null,
+      'notes', 'Brown collar', 'sharePhone', true,
+      'contactPhone', '+27821234567'), 'member-sighting-0001') is not null,
   'member submits a private linked sighting');
 insert into sighting_results select is(
   (select count(*)::integer from public.missing_case_sightings), 1,
@@ -213,6 +226,6 @@ insert into sighting_results select is(
   'non-public general area remains in case history');
 
 insert into sighting_results select * from finish();
-select coalesce(string_agg(result, E'\n\n'), 'ok - all 36 tests passed') as result
+select coalesce(string_agg(result, E'\n\n'), 'ok - all 38 tests passed') as result
   from sighting_results where result not like 'ok %';
 rollback;

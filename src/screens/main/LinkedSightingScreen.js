@@ -25,7 +25,7 @@ function Choice({ label, selected, onPress }) {
 export function LinkedSightingScreen({ navigation, route }) {
   const { showDialog } = useAppDialog();
   const { reportId, animalName, lastSeenAt } = route.params;
-  const { privateProfile, session } = useSession();
+  const { session } = useSession();
   const [values, setValues] = useState(blankLinkedSighting);
   const [errors, setErrors] = useState({});
   const [message, setMessage] = useState('');
@@ -243,11 +243,12 @@ export function LinkedSightingScreen({ navigation, route }) {
     <Pressable accessibilityRole="button" disabled={busy} onPress={pickPhoto} style={styles.secondaryButton}><MaterialCommunityIcons name="image-plus" size={22} color={colors.primary} /><Text style={styles.link}>{photoUri ? 'Choose a different photo' : 'Choose a photo'}</Text></Pressable>
     {photoUri ? <Pressable accessibilityRole="button" disabled={busy} onPress={() => { setPhotoUri(null); setDirty(true); }} style={styles.removePhoto}><Text style={styles.link}>Remove selected photo</Text></Pressable> : null}
 
-    {privateProfile?.mobile_e164 ? <Pressable accessibilityRole="checkbox" accessibilityState={{ checked: values.sharePhone }} onPress={() => update('sharePhone', !values.sharePhone)} style={styles.checkRow}>
+    <Pressable accessibilityRole="checkbox" accessibilityState={{ checked: values.sharePhone }} onPress={() => update('sharePhone', !values.sharePhone)} style={styles.checkRow}>
       <MaterialCommunityIcons name={values.sharePhone ? 'checkbox-marked' : 'checkbox-blank-outline'} size={25} color={colors.primary} />
-      <Text style={styles.choiceText}>Let the owner see my saved phone number for this sighting</Text>
-    </Pressable> : null}
-    <Text style={styles.privacy}>Only this missing-report owner and authorised administrators can read your sighting. Your phone stays hidden unless you choose to share it above.</Text>
+      <Text style={styles.choiceText}>Let the owner call me about this sighting</Text>
+    </Pressable>
+    {values.sharePhone ? <FormField label="Your South African mobile number (private to the owner)" value={values.phone} onChangeText={(value) => update('phone', value)} keyboardType="phone-pad" placeholder="082 123 4567" error={errors.phone} /> : null}
+    <Text style={styles.privacy}>Only this missing-report owner and authorised administrators can read your sighting. Your number is shared only for this sighting when you select the option above.</Text>
     {error ? <Text accessibilityRole="alert" style={styles.error}>{error}</Text> : null}
     <PrimaryButton label={busy ? 'Sending sighting…' : 'Send sighting to owner'} disabled={busy} onPress={submit} />
   </ScreenContainer>;

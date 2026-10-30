@@ -26,7 +26,7 @@ Contact: `info@digitack.co.za` everywhere. Subject conventions: "Privacy", "Dele
 
 ### Visibility
 - Home address, home map location, private holding addresses, full microchip/tag numbers, ownership evidence, drafts and email address are never public.
-- Phone and WhatsApp appear on a report only when the reporter enables them for that report.
+- Public missing reports show neither the owner's phone nor WhatsApp. A contributor may enter a mobile number for one private sighting with explicit consent; only the report owner and authorised reviewers can access it.
 - Public incident locations show no more than a street/public-landmark name without a house number. Missing reports default to suburb level; found-animal current whereabouts show a general area only. Exact coordinates are never public, including on maps.
 - Found reports may use "anonymous finder" as the public identity.
 - Visitors can browse public reports without an account.

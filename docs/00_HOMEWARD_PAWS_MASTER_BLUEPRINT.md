@@ -133,7 +133,7 @@ See `01_PRODUCT_AND_USER_FLOWS.md` for full requirements.
 - A found animal's private holding address is hidden; the public report shows a general area.
 - Full microchip, tag and ownership identifiers remain private.
 - Ownership evidence is private and stored separately.
-- Phone and WhatsApp actions appear only when enabled for that report.
+- Public missing reports never show the owner's phone or WhatsApp. Contributors respond through a private in-app sighting; they may enter their own mobile number for that sighting with explicit consent, visible only to the owner and authorised reviewers.
 - Structured case responses are included; open in-app chat is excluded from Version 1.
 
 ## 10. Matching Decisions

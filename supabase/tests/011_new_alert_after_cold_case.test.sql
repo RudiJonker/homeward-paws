@@ -50,9 +50,9 @@ values ('e2000000-0000-0000-0000-000000000001', 'last_seen', 'Gauteng',
   'Johannesburg', 'Old Suburb', 'manual', 'suburb',
   'Old Suburb, Johannesburg, Gauteng', -26.111, 28.111);
 insert into public.missing_report_details
-  (report_id, last_seen_at, time_accuracy, circumstance, approach_code, contact_phone)
+  (report_id, last_seen_at, time_accuracy, circumstance, approach_code)
 values ('e2000000-0000-0000-0000-000000000001', now() - interval '8 days',
-  'approximate', 'wandered', 'slowly', true);
+  'approximate', 'wandered', 'slowly');
 insert into public.report_photos (report_id, storage_path, display_order)
 values ('e2000000-0000-0000-0000-000000000001',
   'a2000000-0000-0000-0000-000000000001/e2000000-0000-0000-0000-000000000001/old.jpg', 0);

@@ -22,7 +22,7 @@ export const blankMissingSafetyContact = {
   approach: '',
   biteScratchKickRisk: false,
   approachNote: '',
-  contact: { inApp: true, phone: false, whatsapp: false }
+  contact: { inApp: true }
 };
 
 export function restoreMissingSafetyContact(saved) {
@@ -30,11 +30,11 @@ export function restoreMissingSafetyContact(saved) {
     ...blankMissingSafetyContact,
     ...saved,
     urgencyFlags: Array.isArray(saved?.urgencyFlags) ? saved.urgencyFlags : [],
-    contact: { ...blankMissingSafetyContact.contact, ...saved?.contact }
+    contact: { inApp: true }
   };
 }
 
-export function validateMissingSafetyContact(values, { hasMobile = false, hasWhatsapp = false } = {}) {
+export function validateMissingSafetyContact(values) {
   const errors = {};
   const allowedUrgency = URGENCY_OPTIONS.map(([value]) => value);
   const allowedApproach = APPROACH_OPTIONS.map(([value]) => value);
@@ -45,10 +45,7 @@ export function validateMissingSafetyContact(values, { hasMobile = false, hasWha
   if ((values.urgencyNote ?? '').length > 500) errors.urgencyNote = 'Keep the urgent note under 500 characters.';
   if ((values.approachNote ?? '').length > 500) errors.approachNote = 'Keep the approach note under 500 characters.';
 
-  const { inApp, phone, whatsapp } = values.contact ?? {};
-  if (!inApp && !phone && !whatsapp) errors.contact = 'Choose at least one way people can respond.';
-  if (phone && !hasMobile) errors.phone = 'Add a mobile number to your profile before allowing calls.';
-  if (whatsapp && !hasWhatsapp) errors.whatsapp = 'Enable WhatsApp for your profile number before offering it on a report.';
+  if (values.contact?.inApp !== true) errors.contact = 'In-app sightings are required for missing reports.';
 
   return { valid: Object.keys(errors).length === 0, errors };
 }

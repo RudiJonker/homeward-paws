@@ -9,7 +9,7 @@ function LinkRow({ label, url }) {
 }
 
 export function PrivacyContactScreen() {
-  return <ScreenContainer><Text style={styles.title}>Privacy and contact</Text><Text style={styles.body}>Your home area, coordinates, mobile number and email are private. Phone and WhatsApp will only appear on a future report when you explicitly enable them.</Text><View style={styles.list}><LinkRow label="Privacy Policy" url={links.privacy} /><LinkRow label="Terms of Use" url={links.terms} /><LinkRow label="Account deletion information" url={links.deleteAccount} /></View></ScreenContainer>;
+  return <ScreenContainer><Text style={styles.title}>Privacy and contact</Text><Text style={styles.body}>Your home area, coordinates and email stay private. Your phone number never appears on a public missing report. You may choose to share your own number privately when sending a sighting.</Text><View style={styles.list}><LinkRow label="Privacy Policy" url={links.privacy} /><LinkRow label="Terms of Use" url={links.terms} /><LinkRow label="Account deletion information" url={links.deleteAccount} /></View></ScreenContainer>;
 }
 
 export function HelpSafetyScreen() {

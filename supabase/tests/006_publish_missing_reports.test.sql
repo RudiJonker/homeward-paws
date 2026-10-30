@@ -1,6 +1,6 @@
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(45);
+select plan(47);
 
 create temporary table publish_results (result text) on commit drop;
 grant select, insert on publish_results to anon, authenticated, service_role;
@@ -114,6 +114,16 @@ select public.save_missing_draft('d1000000-0000-0000-0000-000000000001',
 insert into publish_results select throws_ok(
   $$select public.publish_missing_report('e1000000-0000-0000-0000-000000000001')$$,
   '23514', null, 'exact public location cannot publish');
+select public.save_missing_draft('d1000000-0000-0000-0000-000000000001',
+  jsonb_set((select payload from publish_payload),
+    '{safety_contact,contact,phone}', 'true'::jsonb),
+  'e1000000-0000-0000-0000-000000000001');
+insert into publish_results select ok(
+  'safety_contact' = any(public.missing_draft_readiness('e1000000-0000-0000-0000-000000000001')),
+  'legacy public phone choice makes a draft unready');
+insert into publish_results select throws_ok(
+  $$select public.publish_missing_report('e1000000-0000-0000-0000-000000000001')$$,
+  '23514', null, 'legacy public phone choice cannot publish');
 select public.save_missing_draft('d1000000-0000-0000-0000-000000000001',
   (select payload from publish_payload),
   'e1000000-0000-0000-0000-000000000001');
@@ -310,6 +320,6 @@ insert into publish_results select is(
   0, 'deleted member photo report is no longer public');
 
 insert into publish_results select * from finish();
-select coalesce(string_agg(result, E'\n\n'), 'ok - all 45 tests passed') as result
+select coalesce(string_agg(result, E'\n\n'), 'ok - all 47 tests passed') as result
 from publish_results where result not like 'ok %';
 rollback;

@@ -27,7 +27,6 @@ Development exception: hosted email verification and password recovery remain in
 
 - First name
 - Last name
-- Mobile number stored as E.164
 - Province
 - City or town
 - Suburb
@@ -38,7 +37,6 @@ Development exception: hosted email verification and password recovery remain in
 - Public display name
 - Avatar
 - Device-derived location
-- WhatsApp availability
 - Notification permission
 
 No role is selected. New accounts are members.
@@ -154,7 +152,7 @@ Methods: current location, map (when a provider is chosen), manual entry or home
 
 Urgency may include medication, injury, age, pregnancy/nursing, sensory or mobility impairment, and weather vulnerability. Approach guidance includes safe to approach, approach slowly, do not chase, do not catch, or bite/scratch/kick risk.
 
-Contact options: structured in-app response, WhatsApp and phone. At least one channel is required. Phone/WhatsApp appear publicly only when enabled.
+Missing-report responses use private, structured in-app sightings. The owner's phone and WhatsApp are never public. A contributor may enter their own mobile number when sending a sighting and explicitly choose to share it privately with the owner.
 
 ### Step 6 — Preview
 

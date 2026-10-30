@@ -1,7 +1,7 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback, useRef, useState } from 'react';
-import { Image, Linking, Pressable, Share, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, Share, StyleSheet, Text, View } from 'react-native';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { ScreenContainer } from '../../components/ScreenContainer';
@@ -76,15 +76,6 @@ export function MissingReportDetailScreen({ navigation, route }) {
     }
   }
 
-  async function openContact(url) {
-    setActionError('');
-    try {
-      await Linking.openURL(url);
-    } catch {
-      setActionError('Could not open this contact option on your device.');
-    }
-  }
-
   async function openContentReport(photoPath = null) {
     const intent = { reportId, photoPath, reference: report.public_reference };
     setActionError('');
@@ -108,7 +99,7 @@ export function MissingReportDetailScreen({ navigation, route }) {
       <Text style={styles.title}>{outcome.status === 'reunited' ? 'Animal reunited' : 'Report no longer active'}</Text>
       <Text selectable style={styles.reference}>{outcome.public_reference}</Text>
       <Text style={styles.message}>{outcome.public_message}</Text>
-      <Text style={styles.note}>Private reunion details and former contact options are not shown.</Text>
+      <Text style={styles.note}>Private reunion details are not shown.</Text>
     </View>
   </ScreenContainer>;
   if (!report) return (
@@ -124,7 +115,6 @@ export function MissingReportDetailScreen({ navigation, route }) {
 
   const animalDescription = [animalCategoryLabel(report.category), report.breed, report.distinctive_features].filter(Boolean).join(' · ');
   const timeline = Array.isArray(report.public_timeline) ? report.public_timeline : [];
-  const whatsappDigits = report.whatsapp?.replace(/\D/g, '');
 
   return (
     <ScreenContainer>
@@ -168,9 +158,7 @@ export function MissingReportDetailScreen({ navigation, route }) {
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Contact</Text>
         <Detail label="Reported by" value={report.reporter_name} />
-        {report.phone ? <PrimaryButton label={`Call ${report.phone}`} onPress={() => openContact(`tel:${report.phone}`)} /> : null}
-        {whatsappDigits ? <Pressable accessibilityRole="button" onPress={() => openContact(`https://wa.me/${whatsappDigits}`)} style={styles.secondaryButton}><Text style={styles.link}>WhatsApp {report.whatsapp}</Text></Pressable> : null}
-        {report.contact_in_app ? <Text style={styles.note}>Use “I saw this animal” above to send the owner a private, structured sighting. The owner reviews it in My Reports.</Text> : null}
+        <Text style={styles.note}>Use “I saw this animal” above to send the owner a private, structured sighting. The owner reviews it in My Reports.</Text>
       </View>
       {timeline.length ? <View style={styles.card}><Text style={styles.cardTitle}>Public timeline</Text>{timeline.map((event, index) => <View key={`${event.occurred_at}-${index}`} style={styles.timelineItem}><Text style={styles.detailLabel}>{formatDate(event.occurred_at)}</Text><Text style={styles.detailValue}>{event.message || event.event_type?.replace(/_/g, ' ')}</Text></View>)}</View> : null}
       <PrimaryButton label="Share report reference" onPress={share} />

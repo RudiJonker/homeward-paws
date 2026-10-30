@@ -22,7 +22,7 @@ const STEPS = {
 
 const CONFIRMATIONS = [
   'The animal, last-seen facts and safety advice are accurate to the best of my knowledge.',
-  'I have checked the proposed public location, photos, notes and contact choices for private information.',
+  'I have checked the proposed public location, photos and notes for private information.',
   'I will update or close the report when I learn more or the animal is found.'
 ];
 
@@ -127,7 +127,7 @@ export function MissingPreviewScreen({ navigation, route }) {
   const preview = buildMissingPublicPreview({ animal, draft, profile, privateProfile });
   const previewPhotos = selectedMissingPhotos(animal, draft.draft_payload?.appearance);
   const animalDescription = [animalCategoryLabel(preview.animal.category), preview.animal.breed, preview.animal.pattern, preview.animal.coat, preview.animal.features].filter(Boolean).join(' · ');
-  const contactDescription = [preview.contact.inApp && 'Structured in-app response', preview.contact.phone && `Call ${preview.contact.phone}`, preview.contact.whatsapp && `WhatsApp ${preview.contact.whatsapp}`].filter(Boolean).join(' · ');
+  const contactDescription = 'Private in-app sighting';
 
   return (
     <ScreenContainer>
@@ -185,14 +185,14 @@ export function MissingPreviewScreen({ navigation, route }) {
 
       <PreviewCard title="Reporter and contact">
         <Detail label="Public name" value={preview.publicName} />
-        <Detail label="Contact options" value={contactDescription || 'No valid contact option selected'} />
+        <Detail label="How people respond" value={contactDescription} />
       </PreviewCard>
 
       <View style={styles.privateCard}>
         <MaterialCommunityIcons name="shield-lock-outline" size={25} color={colors.primaryDark} />
         <View style={styles.privateBody}>
           <Text style={styles.cardTitle}>Stays private</Text>
-          <Text style={styles.body}>Exact coordinates, home or holding addresses, full identifiers, ownership evidence, private health notes, your email and any phone number you did not enable are not part of this proposed public view.</Text>
+          <Text style={styles.body}>Exact coordinates, home or holding addresses, full identifiers, ownership evidence, private health notes, your email and phone number are not part of this proposed public view.</Text>
           <Text style={styles.warning}>Check every free-text note and photo for details you do not want others to see, including house numbers, tags and other people’s information.</Text>
         </View>
       </View>

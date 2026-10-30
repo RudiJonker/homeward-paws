@@ -14,7 +14,7 @@ export function selectedMissingPhotos(animal, appearance) {
   return eligible.filter((photo) => selected.has(photo.id));
 }
 
-export function missingReviewIssues({ animal, draft, privateProfile }) {
+export function missingReviewIssues({ animal, draft }) {
   const payload = draft?.draft_payload ?? {};
   const location = restoreMissingLocationDraft(payload.last_seen_location);
   const safety = restoreMissingSafetyContact(payload.safety_contact);
@@ -31,10 +31,7 @@ export function missingReviewIssues({ animal, draft, privateProfile }) {
   if (payload.last_seen?.complete !== true || !validateMissingLastSeen(payload.last_seen ?? {}).valid) issues.push('last_seen');
   if (payload.last_seen_location?.complete !== true || payload.last_seen_location?.publicPrecision === 'exact'
     || !validateMissingLocation(location).valid) issues.push('last_seen_location');
-  if (payload.safety_contact?.complete !== true || !validateMissingSafetyContact(safety, {
-    hasMobile: Boolean(privateProfile?.mobile_e164),
-    hasWhatsapp: Boolean(privateProfile?.mobile_e164 && privateProfile?.whatsapp_enabled)
-  }).valid) issues.push('safety_contact');
+  if (payload.safety_contact?.complete !== true || !validateMissingSafetyContact(safety).valid) issues.push('safety_contact');
 
   return issues;
 }
@@ -48,13 +45,11 @@ export function missingReviewStatus(localIssues, serverIssues, confirmations) {
 
 // This is a display-only, allowlisted projection. The future publication
 // function must independently enforce the same (or stricter) public surface.
-export function buildMissingPublicPreview({ animal, draft, profile, privateProfile }) {
+export function buildMissingPublicPreview({ animal, draft, profile }) {
   const payload = draft.draft_payload ?? {};
   const appearance = payload.appearance ?? {};
   const lastSeen = payload.last_seen ?? {};
   const safety = restoreMissingSafetyContact(payload.safety_contact);
-  const phone = text(privateProfile?.mobile_e164);
-  const contact = safety.contact ?? {};
 
   return {
     title: `${text(animal.name)} is missing`,
@@ -85,10 +80,6 @@ export function buildMissingPublicPreview({ animal, draft, profile, privateProfi
       biteScratchKickRisk: safety.biteScratchKickRisk === true,
       approachNote: text(safety.approachNote)
     },
-    contact: {
-      inApp: contact.inApp === true,
-      phone: contact.phone === true ? phone : '',
-      whatsapp: contact.whatsapp === true && privateProfile?.whatsapp_enabled === true ? phone : ''
-    }
+    contact: { inApp: true }
   };
 }

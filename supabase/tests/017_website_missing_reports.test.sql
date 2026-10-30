@@ -1,6 +1,6 @@
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(13);
+select plan(18);
 
 create temporary table website_results (result text) on commit drop;
 grant select, insert on website_results to anon, authenticated, service_role;
@@ -34,8 +34,6 @@ update public.profiles set display_name = 'Private Owner'
   where id = 'a0260000-0000-0000-0000-000000000001';
 update public.profiles set role = 'admin'
   where id = 'a0260000-0000-0000-0000-000000000003';
-update public.profile_private set mobile_e164 = '+27821234567', whatsapp_enabled = true
-  where user_id = 'a0260000-0000-0000-0000-000000000001';
 insert into public.animals (id, owner_id, name, category, status)
 values ('b0260000-0000-0000-0000-000000000001',
   'a0260000-0000-0000-0000-000000000001', 'Nala', 'dog', 'missing');
@@ -47,10 +45,9 @@ values ('c0260000-0000-0000-0000-000000000001', 'missing', 'active',
 insert into public.report_animal_snapshots (report_id, name, category, breed)
 values ('c0260000-0000-0000-0000-000000000001', 'Nala', 'dog', 'Mixed');
 insert into public.missing_report_details
-  (report_id, last_seen_at, time_accuracy, circumstance, approach_code,
-   contact_phone, contact_whatsapp)
+  (report_id, last_seen_at, time_accuracy, circumstance, approach_code)
 values ('c0260000-0000-0000-0000-000000000001', now(), 'approximate',
-  'wandered', 'slowly', true, true);
+  'wandered', 'slowly');
 insert into public.report_locations
   (report_id, location_type, province, city, suburb, source, public_precision,
    public_label, private_latitude, private_longitude)
@@ -62,8 +59,11 @@ reset role;
 set local role anon;
 select set_config('request.jwt.claims', '{"role":"anon"}', true);
 insert into website_results select is(
-  (select phone from public.get_public_missing_reports()), '+27821234567',
-  'app projection contains an explicitly opted-in phone');
+  (select phone from public.get_public_missing_reports()), null::text,
+  'app projection never includes owner phone');
+insert into website_results select is(
+  (select whatsapp from public.get_public_missing_reports()), null::text,
+  'app projection never includes owner WhatsApp');
 insert into website_results select is(
   (select count(*) from public.get_website_missing_reports()), 1::bigint,
   'website projection returns the active missing alert');
@@ -100,6 +100,12 @@ reset role;
 set local role authenticated;
 select set_config('request.jwt.claims', '{"sub":"a0260000-0000-0000-0000-000000000002","role":"authenticated"}', true);
 insert into website_results select is(
+  (select phone from public.get_public_missing_reports()), null::text,
+  'other signed-in member cannot see owner phone');
+insert into website_results select is(
+  (select whatsapp from public.get_public_missing_reports()), null::text,
+  'other signed-in member cannot see owner WhatsApp');
+insert into website_results select is(
   (select count(*) from public.get_website_missing_reports()), 1::bigint,
   'other member receives the same website projection');
 select set_config('request.jwt.claims', '{"sub":"a0260000-0000-0000-0000-000000000003","role":"authenticated"}', true);
@@ -107,7 +113,20 @@ insert into website_results select is(
   (select count(*) from public.get_website_missing_reports()), 1::bigint,
   'admin receives the same website projection');
 
+reset role;
+set local role service_role;
+select set_config('request.jwt.claims', '{"role":"service_role"}', true);
+insert into website_results select throws_ok(
+  $$update public.missing_report_details set contact_phone = true
+    where report_id = 'c0260000-0000-0000-0000-000000000001'$$,
+  '23514', null, 'server rejects public owner phone setting');
+insert into website_results select ok(
+  not exists (select 1 from information_schema.columns
+    where table_schema = 'public' and table_name = 'profile_private'
+      and column_name in ('mobile_e164', 'whatsapp_enabled')),
+  'unused profile phone and WhatsApp columns have been removed');
+
 insert into website_results select * from finish();
-select coalesce(string_agg(result, E'\n\n'), 'ok - all 13 tests passed') as result
+select coalesce(string_agg(result, E'\n\n'), 'ok - all 18 tests passed') as result
   from website_results where result not like 'ok %';
 rollback;

@@ -1,5 +1,6 @@
 import { SOUTH_AFRICAN_PROVINCES } from '../config/constants';
 import { formatPickerDate, formatPickerTime } from './missingLastSeen';
+import { normalizeSouthAfricanMobile } from './validation';
 
 export const SIGHTING_MOVEMENTS = [
   ['moving', 'Moving'], ['stationary', 'Standing or sitting'],
@@ -21,7 +22,7 @@ export function blankLinkedSighting() {
     province: '', city: '', suburb: '', streetOrLandmark: '',
     locationSource: 'manual', latitude: null, longitude: null, accuracyMetres: null,
     movement: '', direction: '', condition: 'unsure', stillVisible: false,
-    notes: '', sharePhone: false
+    notes: '', sharePhone: false, phone: ''
   };
 }
 
@@ -48,6 +49,8 @@ export function validateLinkedSighting(values, lastSeenAt, now = new Date()) {
   if (values.streetOrLandmark?.length > 200) errors.streetOrLandmark = 'Keep this under 200 characters.';
   if (values.direction?.length > 300) errors.direction = 'Keep this under 300 characters.';
   if (values.notes?.length > 1000) errors.notes = 'Keep this under 1,000 characters.';
+  const phone = values.sharePhone ? normalizeSouthAfricanMobile(values.phone ?? '') : null;
+  if (values.sharePhone && !phone) errors.phone = 'Enter a valid South African mobile number to share with the owner.';
   if (values.locationSource === 'device' && (values.latitude == null || values.longitude == null)) {
     errors.location = 'Capture the device location again, or enter the area manually.';
   }
@@ -64,7 +67,8 @@ export function validateLinkedSighting(values, lastSeenAt, now = new Date()) {
       accuracyMetres: values.locationSource === 'device' ? values.accuracyMetres : null,
       movement: values.movement, direction: values.direction?.trim() || null,
       condition: values.condition, stillVisible: values.stillVisible,
-      notes: values.notes?.trim() || null, sharePhone: values.sharePhone
+      notes: values.notes?.trim() || null, sharePhone: values.sharePhone,
+      contactPhone: phone
     }
   };
 }

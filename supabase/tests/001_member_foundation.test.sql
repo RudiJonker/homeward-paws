@@ -38,7 +38,6 @@ insert into test_results select is((select count(*) from public.profiles), 1::bi
 insert into test_results select is((select count(*) from public.profile_private), 1::bigint, 'member A reads only own private profile');
 
 update public.profiles set first_name = 'Member A', last_name = 'Test' where id = '10000000-0000-0000-0000-000000000001';
-update public.profile_private set mobile_e164 = '+27821234567' where user_id = '10000000-0000-0000-0000-000000000001';
 insert into test_results select is((select first_name from public.profiles where id = '10000000-0000-0000-0000-000000000001'), 'Member A', 'member updates own ordinary profile field');
 
 update public.profiles set first_name = 'Hacked' where id = '20000000-0000-0000-0000-000000000002';
@@ -55,7 +54,7 @@ insert into test_results select throws_ok(
 );
 insert into test_results select lives_ok(
   $$select public.complete_member_profile('Gauteng', 'Johannesburg', 'Melville', null, null, 'manual')$$,
-  'member can complete a valid profile'
+  'member can complete a valid profile without a mobile number'
 );
 insert into test_results select is((select profile_completed from public.profiles where id = '10000000-0000-0000-0000-000000000001'), true, 'profile completion is recorded');
 

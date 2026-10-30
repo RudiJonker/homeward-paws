@@ -174,7 +174,7 @@ export function MissingLastSeenLocationScreen({ navigation, route }) {
       setDirty(false);
       setErrors({});
       const confirmation = finishStep
-        ? 'Last-seen location saved privately. Next, choose safety and contact options. Nothing has been published.'
+        ? 'Last-seen location saved privately. Next, add safety guidance. Nothing has been published.'
         : 'Incomplete location saved privately. You can return and finish it later.';
       setSavedMessage(confirmation);
       showDialog('Draft saved', confirmation, finishStep ? [

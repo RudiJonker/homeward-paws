@@ -36,6 +36,7 @@ HEAD = """<!doctype html>
 """
 
 NAV_ITEMS = [
+    ("nearby.html", "Animals near you"),
     ("index.html#how-it-works", "How it works"),
     ("safety.html", "Help and safety"),
     ("privacy-policy.html", "Privacy"),

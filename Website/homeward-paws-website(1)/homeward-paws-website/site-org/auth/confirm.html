@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en-ZA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Continue in the app · Homeward Paws</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#FBF7F2">
+<link rel="icon" type="image/png" sizes="48x48" href="../assets/img/favicon-48.png">
+<link rel="stylesheet" href="../assets/css/site.css">
+<style>
+  .auth-wrap { max-width: 560px; margin: 0 auto; padding-block: 48px 72px; }
+  .auth-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-xl); padding: 32px 28px; display: flex; flex-direction: column; gap: 16px; box-shadow: var(--shadow); }
+  .auth-card h1 { font-size: clamp(26px, 4vw, 32px); font-weight: 900; }
+  .auth-card p { color: var(--ink-2); font-weight: 600; }
+  .auth-icon { width: 72px; height: 72px; border-radius: 50%; display: grid; place-items: center; background: var(--primary-light); }
+  .auth-icon svg { width: 34px; height: 34px; }
+  .auth-actions { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+  .auth-actions .btn { width: 100%; }
+  .auth-hint { font-size: 14px; }
+  .auth-status { font-size: 15px; font-weight: 700; border-radius: var(--radius-md); padding: 12px 14px; }
+  .auth-status.ok { background: var(--reunited-tint); color: var(--reunited-on); }
+  .auth-status.err { background: var(--missing-tint); color: var(--missing-on); }
+  [hidden] { display: none !important; }
+  button.btn { font-family: var(--font); cursor: pointer; }
+  button.btn[disabled] { opacity: .6; cursor: progress; }
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../index.html" aria-label="Homeward Paws home"><img src="../assets/img/logo-horizontal.svg" alt="Homeward Paws" width="211" height="46"></a>
+  </div>
+</header>
+
+<main id="main" class="wrap">
+  <div class="auth-wrap">
+    <section class="auth-card" aria-live="polite">
+      <div class="auth-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path fill="#227A71" d="M8.4 3c1.1-.2 2.4 1.1 2.7 2.9.4 1.8-.3 3.4-1.5 3.5-1.1.2-2.4-1.1-2.7-2.9C6.5 4.8 7.2 3.2 8.4 3Zm7.1 0c1.2.2 1.9 1.8 1.5 3.5-.3 1.8-1.6 3.1-2.8 2.9-1.2-.2-1.8-1.7-1.5-3.5.4-1.8 1.6-3.1 2.8-2.9ZM3 7.6c1.1-.5 2.7.4 3.5 2 .8 1.6.5 3.2-.6 3.7-1.1.5-2.7-.4-3.5-2-.8-1.6-.5-3.2.6-3.7Zm18 0c1.1.5 1.4 2.1.6 3.7-.8 1.6-2.3 2.5-3.5 2-1.1-.5-1.4-2.2-.6-3.7.8-1.6 2.4-2.5 3.5-2Zm-1.7 10.8c0 .9-.7 2-1.5 2.4-1.8.8-3.9-.9-5.9-.9s-4.1 1.8-5.9.9c-1-.5-1.7-1.8-1.6-2.9.2-1.5 2-2.3 3-3.4 1.4-1.4 2.4-4 4.4-4s3.1 2.6 4.4 4.1c1.1 1.2 3 2.2 3.1 3.8Z"/></svg>
+      </div>
+
+      <h1 id="title">Continue in the Homeward Paws app</h1>
+      <p id="intro">Tap the button below on the phone where Homeward Paws is installed.</p>
+
+      <div class="auth-actions">
+        <a class="btn btn-primary" id="openApp" href="#">Open Homeward Paws</a>
+        <button class="btn btn-outline" id="confirmHere" type="button" hidden>Confirm on this computer instead</button>
+      </div>
+
+      <p class="auth-hint" id="hint">If the button does nothing, open the Homeward Paws app and type the 6-digit code from the email.</p>
+      <div class="auth-status" id="status" hidden></div>
+    </section>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="legal-line">
+      <span>Homeward Paws is a product of Digitack (Pty) Ltd, South Africa.</span>
+      <span>info@homewardpaws.org.za · Technical support: info@digitack.co.za · <a href="../privacy-policy.html">Privacy policy</a> · <a href="../safety.html">Help and safety</a></span>
+    </div>
+  </div>
+</footer>
+
+<!-- Self-hosted supabase-js 2.45.4 (MIT). Only used by "Confirm on this computer". -->
+<script src="../assets/js/auth-config.js"></script>
+<script src="../assets/js/vendor/supabase.js"></script>
+<script src="../assets/js/confirm.js"></script>
+</body>
+</html>

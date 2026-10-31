@@ -25,7 +25,7 @@ Before changing the project, read:
 - Automated matching suggests candidates only; humans confirm identity and reunion.
 - Preserve important history through timelines, closure and archiving.
 - Accounts are for people aged 18 and older.
-- The only public contact address is `info@digitack.co.za`.
+- Main public contact: `info@homewardpaws.org.za`; technical support: `info@digitack.co.za`.
 - Never request broad photo access (`READ_MEDIA_IMAGES`, `READ_MEDIA_VIDEO`, `READ_EXTERNAL_STORAGE`). Use the Android photo picker.
 - Never request background location. Location is foreground-only and optional, with a manual alternative.
 - What the app does must match the published privacy policy, terms and account deletion page. If a feature would contradict them, stop and ask.

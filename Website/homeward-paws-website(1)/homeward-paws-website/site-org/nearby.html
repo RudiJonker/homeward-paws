@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en-ZA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Animals near you · Homeward Paws</title>
+<meta name="description" content="Missing animals reported in your province on Homeward Paws. Your location stays on your device.">
+<meta name="theme-color" content="#FBF7F2">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Homeward Paws">
+<meta property="og:title" content="Animals near you · Homeward Paws">
+<meta property="og:description" content="Missing animals reported in your province on Homeward Paws.">
+<link rel="icon" type="image/png" sizes="48x48" href="assets/img/favicon-48.png">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+<link rel="stylesheet" href="assets/css/site.css">
+<style>
+  /* Page-specific additions; tokens come from site.css. */
+  [hidden] { display: none !important; }
+  .near-hero { padding-block: 48px 12px; display: flex; flex-direction: column; gap: 12px; }
+  .near-hero h1 { font-size: clamp(34px, 5vw, 48px); font-weight: 900; }
+  .near-hero p { color: var(--ink-2); font-weight: 600; max-width: 42em; }
+
+  .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+  .tab { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 16px; border-radius: 999px; border: 2px solid var(--line); background: var(--surface); font: 800 15px var(--font); color: var(--ink); cursor: pointer; }
+  .tab svg { width: 18px; height: 18px; }
+  .tab[aria-selected="true"] { border-color: var(--primary); background: var(--primary-light); color: var(--primary-dark); }
+  .tab .count { font-size: 12px; background: var(--surface-muted); border-radius: 999px; padding: 1px 8px; }
+  .tab[aria-selected="true"] .count { background: var(--surface); }
+
+  .area-bar { margin-top: 20px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 18px 20px; display: grid; gap: 14px; }
+  .area-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; }
+  .field { display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: 1 1 180px; }
+  .field label { font-size: 13px; font-weight: 800; color: var(--ink-2); }
+  .field select, .field input { font: 600 16px var(--font); color: var(--ink); min-height: 46px; padding: 8px 12px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--bg); width: 100%; }
+  .area-bar .btn { min-height: 46px; padding: 8px 18px; font-size: 15px; }
+  .area-note { font-size: 14px; color: var(--ink-2); font-weight: 600; }
+  .area-note strong { color: var(--ink); }
+  .ref-form { display: flex; gap: 10px; flex-wrap: wrap; align-items: end; padding-top: 14px; border-top: 1px solid var(--line); }
+
+  .results { padding-block: 24px 72px; }
+  .status-line { color: var(--ink-2); font-weight: 700; margin-bottom: 16px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 20px; }
+  .report { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden; display: flex; flex-direction: column; }
+  /* Every photo shows in the same 4:3 frame, cropped to fill; portrait shots
+     keep the upper part, where the animal's head usually is. */
+  .report-photo { aspect-ratio: 4 / 3; width: 100%; overflow: hidden; background: var(--surface-muted); display: grid; place-items: center; }
+  .report-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center 30%; }
+  .report-photo img.placeholder { width: 40%; height: auto; opacity: 0.55; object-fit: contain; }
+  .report-body { padding: 18px 20px 20px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .report h2 { font-size: 22px; font-weight: 900; }
+  .report .sub { color: var(--ink-2); font-weight: 700; font-size: 15px; }
+  .report .where { font-weight: 700; font-size: 15px; display: flex; gap: 6px; align-items: flex-start; }
+  .report .where svg { width: 18px; height: 18px; flex-shrink: 0; margin-top: 3px; color: var(--primary); }
+  .warn-line { background: var(--highlight-light); color: var(--highlight-on); border-radius: var(--radius-sm); padding: 8px 12px; font-size: 14px; font-weight: 700; }
+  .report details { margin-top: auto; border-top: 1px solid var(--line); padding-top: 10px; }
+  .report summary { cursor: pointer; font-weight: 800; color: var(--primary); list-style: none; }
+  .report summary::-webkit-details-marker { display: none; }
+  .report summary::after { content: " +"; }
+  .report details[open] summary::after { content: " –"; }
+  .facts-list { margin: 10px 0 0; display: grid; gap: 8px; font-size: 15px; }
+  .facts-list dt { font-weight: 800; font-size: 13px; color: var(--ink-2); text-transform: uppercase; letter-spacing: 0.06em; }
+  .facts-list dd { margin: 0; font-weight: 600; overflow-wrap: anywhere; }
+  .timeline { list-style: none; padding: 0; margin: 4px 0 0; display: grid; gap: 6px; }
+  .timeline li { font-size: 14px; font-weight: 600; }
+  .timeline time { color: var(--ink-2); font-weight: 700; margin-right: 6px; }
+  .seen-btn { margin-top: 6px; width: 100%; background: var(--accent); }
+  .seen-btn:hover { background: #D0604D; }
+  .seen-note { font-size: 13px; color: var(--ink-2); font-weight: 600; text-align: center; }
+  .ref { font-size: 13px; color: var(--ink-2); font-weight: 700; margin-top: 10px; }
+  .ref a { font-weight: 700; }
+
+  .empty { background: var(--surface); border: 1px dashed var(--line); border-radius: var(--radius-lg); padding: 32px 24px; text-align: center; display: grid; gap: 10px; justify-items: center; }
+  .empty img { width: 72px; opacity: 0.6; }
+  .empty h2 { font-size: 22px; font-weight: 900; }
+  .empty p { color: var(--ink-2); font-weight: 600; max-width: 36em; }
+  .more { display: flex; justify-content: center; margin-top: 28px; }
+  .skeleton { min-height: 340px; background: linear-gradient(90deg, var(--surface) 0%, var(--surface-muted) 50%, var(--surface) 100%); background-size: 200% 100%; animation: shimmer 1.4s infinite; }
+  @keyframes shimmer { to { background-position: -200% 0; } }
+  @media (prefers-reduced-motion: reduce) { .skeleton { animation: none; } }
+
+  /* Phones */
+  @media (max-width: 560px) {
+    .near-hero { padding-block: 28px 4px; gap: 10px; }
+    .near-hero p { font-size: 16px; }
+    .tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+    .tab { justify-content: center; padding: 8px 6px; font-size: 14px; gap: 5px; }
+    .tab .count { display: none; }
+    .area-bar { padding: 14px; gap: 12px; margin-top: 14px; }
+    .area-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
+    .area-row .field:first-child, .area-row .btn { grid-column: 1 / -1; }
+    .area-bar .btn { width: 100%; min-height: 48px; }
+    .ref-form { display: grid; grid-template-columns: minmax(0, 1fr); }
+    .ref-form .btn { width: 100%; }
+    .results { padding-block: 16px 48px; }
+    .grid { gap: 14px; }
+    .report-body { padding: 14px 16px 16px; }
+    .report h2 { font-size: 20px; }
+    .report summary { padding-block: 8px; }
+    .seen-btn { min-height: 52px; font-size: 17px; }
+    .more .btn { width: 100%; }
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html" aria-label="Homeward Paws home"><img src="assets/img/logo-horizontal.svg" alt="Homeward Paws" width="211" height="46"></a>
+    <nav class="nav" aria-label="Main">
+      <a href="nearby.html" aria-current="page">Animals near you</a>
+      <a href="index.html#how-it-works">How it works</a>
+      <a href="safety.html">Help and safety</a>
+      <a href="privacy-policy.html">Privacy</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <div class="wrap near-hero">
+    <span class="eyebrow">Community alerts</span>
+    <h1>Animals near you</h1>
+    <p>Missing animals reported on Homeward Paws in your province. If you think you have seen one, follow the owner's approach advice and tap <strong>Have you seen me?</strong> to tell the owner through the free app.</p>
+
+    <div class="tabs" role="tablist" aria-label="Report type">
+      <button class="tab" role="tab" id="tab-missing" aria-selected="true" aria-controls="panel" data-type="missing">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="var(--missing)" d="M13 13h-2V7h2m0 10h-2v-2h2M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Z"/></svg>
+        Missing <span class="count" id="count-missing">–</span>
+      </button>
+      <button class="tab" role="tab" id="tab-found" aria-selected="false" aria-controls="panel" data-type="found">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="var(--found)" d="M11 13h2v3h3v-5h2l-6-5-6 5h2v5h3v-3Zm1-12 9 4v6c0 5.6-3.8 10.7-9 12-5.2-1.3-9-6.4-9-12V5l9-4Z"/></svg>
+        Found
+      </button>
+      <button class="tab" role="tab" id="tab-sighting" aria-selected="false" aria-controls="panel" data-type="sighting">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="var(--sighting)" d="M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm0 8a5 5 0 1 1 0-10 5 5 0 0 1 0 10Zm0-12.5C7 4.5 2.7 7.6 1 12c1.7 4.4 6 7.5 11 7.5s9.3-3.1 11-7.5c-1.7-4.4-6-7.5-11-7.5Z"/></svg>
+        Seen
+      </button>
+    </div>
+
+    <form class="area-bar" id="filters" novalidate>
+      <div class="area-row">
+        <div class="field">
+          <label for="province">Province</label>
+          <select id="province" name="province">
+            <option value="">All of South Africa</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="city">City or town (optional)</label>
+          <input id="city" name="city" autocomplete="address-level2" maxlength="120">
+        </div>
+        <div class="field">
+          <label for="category">Animal</label>
+          <select id="category" name="category">
+            <option value="">All animals</option>
+          </select>
+        </div>
+        <button type="button" class="btn btn-outline" id="locate">
+          <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm8.94 3A9 9 0 0 0 13 3.06V1h-2v2.06A9 9 0 0 0 3.06 11H1v2h2.06A9 9 0 0 0 11 20.94V23h2v-2.06A9 9 0 0 0 20.94 13H23v-2h-2.06ZM12 19a7 7 0 1 1 0-14 7 7 0 0 1 0 14Z"/></svg>
+          Use my location
+        </button>
+        <button type="submit" class="btn btn-primary">Show</button>
+      </div>
+      <p class="area-note" id="area-note">Your location is used only in your browser to pick your province. It is never sent to Homeward Paws or anyone else.</p>
+      <div class="ref-form">
+        <div class="field">
+          <label for="reference">Have a reference? (e.g. HP-M-1A2B3C4D5E)</label>
+          <input id="reference" name="reference" autocomplete="off" maxlength="20" spellcheck="false">
+        </div>
+        <button type="button" class="btn btn-outline" id="ref-go">Find report</button>
+      </div>
+    </form>
+  </div>
+
+  <section class="wrap results" id="panel" role="tabpanel" aria-labelledby="tab-missing" aria-live="polite">
+    <p class="status-line" id="status"></p>
+    <div class="grid" id="grid"></div>
+    <div class="more"><button type="button" class="btn btn-outline" id="more" hidden>Load more</button></div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="foot">
+      <div>
+        <img src="assets/img/logo-horizontal.svg" alt="Homeward Paws" width="183" height="40">
+        <p>A free community app that helps reunite missing, found and sighted animals with their people in South Africa.</p>
+      </div>
+      <div>
+        <h2>The app</h2>
+        <ul>
+          <li><a href="nearby.html">Animals near you</a></li>
+          <li><a href="index.html#how-it-works">How it works</a></li>
+          <li><a href="safety.html">Help and safety</a></li>
+          <li><a href="safety.html#contact">Contact support</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Legal</h2>
+        <ul>
+          <li><a href="privacy-policy.html">Privacy policy</a></li>
+          <li><a href="terms.html">Terms of use</a></li>
+          <li><a href="delete-account.html">Delete your account</a></li>
+          <li><a href="child-safety.html">Child safety standards</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="legal-line">
+      <span>Homeward Paws is a product of Digitack (Pty) Ltd, South Africa.</span>
+      <span>info@homewardpaws.org.za · Technical support: info@digitack.co.za · © 2026 Digitack (Pty) Ltd</span>
+      <span>Google Play is a trademark of Google LLC.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/auth-config.js"></script>
+<script src="assets/js/vendor/supabase.js"></script>
+<script src="assets/js/nearby.js"></script>
+</body>
+</html>

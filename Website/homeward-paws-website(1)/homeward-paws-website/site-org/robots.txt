@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://homewardpaws.org.za/sitemap.xml

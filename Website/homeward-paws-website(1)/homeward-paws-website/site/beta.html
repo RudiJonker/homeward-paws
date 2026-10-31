@@ -6,12 +6,12 @@
 <title>Join the beta · Homeward Paws</title>
 <meta name="description" content="Sign up to test Homeward Paws on Android before it launches on Google Play. We email you the download link and install steps.">
 <meta name="theme-color" content="#FBF7F2">
-<link rel="canonical" href="https://homewardpaws.co.za/beta.html">
+<link rel="canonical" href="https://www.digitack.co.za/paws/beta.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Homeward Paws">
 <meta property="og:title" content="Join the beta · Homeward Paws">
 <meta property="og:description" content="Sign up to test Homeward Paws on Android before it launches on Google Play. We email you the download link and install steps.">
-<meta property="og:image" content="https://homewardpaws.co.za/assets/img/og-image.jpg">
+<meta property="og:image" content="https://homewardpaws.org.za/assets/img/og-image.jpg">
 <link rel="icon" type="image/png" sizes="48x48" href="assets/img/favicon-48.png">
 <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
 <link rel="stylesheet" href="assets/css/site.css">
@@ -22,6 +22,7 @@
   <div class="wrap">
     <a class="brand" href="index.html" aria-label="Homeward Paws home"><img src="assets/img/logo-horizontal.svg" alt="Homeward Paws" width="211" height="46"></a>
     <nav class="nav" aria-label="Main">
+      <a href="nearby.html">Animals near you</a>
       <a href="index.html#how-it-works">How it works</a>
       <a href="safety.html">Help and safety</a>
       <a href="privacy-policy.html">Privacy</a>
@@ -68,7 +69,7 @@
         <ul>
           <li>You install a test version of the app on your Android phone, straight from this website.</li>
           <li>You create an account, register your animals and try the features. Missing reports and sightings you publish are visible to other app users, so only report real cases, or animal details clearly marked as a test when we ask you to try a flow.</li>
-          <li>You tell us about bugs, confusing screens or ideas by replying to any beta email, or writing to <a href="mailto:info@digitack.co.za?subject=Homeward%20Paws%20beta">info@digitack.co.za</a>.</li>
+          <li>You tell us about bugs, confusing screens or ideas by replying to any beta email, or writing to <a href="mailto:info@homewardpaws.org.za?subject=Homeward%20Paws%20beta">info@homewardpaws.org.za</a>.</li>
           <li>We send you a new download link when there's an update. Test versions can have bugs, and we may reset test data before the public launch. We'll tell you first.</li>
         </ul>
       </section>
@@ -142,7 +143,7 @@
           <div class="form-msg error" id="form-error" role="alert" hidden></div>
 
           <button class="btn btn-primary" type="submit" id="submit-btn">Send me the download link</button>
-          <p class="small">We use these details only to run the beta. Ask us to remove you at any time: <a href="mailto:info@digitack.co.za?subject=Remove%20me%20from%20the%20beta">info@digitack.co.za</a>.</p>
+          <p class="small">We use these details only to run the beta. Ask us to remove you at any time: <a href="mailto:info@homewardpaws.org.za?subject=Remove%20me%20from%20the%20beta">info@homewardpaws.org.za</a>.</p>
         </form>
 
         <div class="beta-done" id="beta-done" hidden>
@@ -155,35 +156,7 @@
     </aside>
   </div>
 </main>
-<script>
-(function () {
-  var form = document.getElementById('beta-form');
-  if (!form || !window.fetch) return;
-  document.getElementById('started').value = String(Date.now());
-  var err = document.getElementById('form-error');
-  var btn = document.getElementById('submit-btn');
-  function fail(msg) { err.textContent = msg; err.hidden = false; btn.disabled = false; btn.textContent = 'Send me the download link'; }
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
-    err.hidden = true;
-    var f = form.elements;
-    if (!f.first_name.value.trim()) return fail('Please enter your first name.');
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email.value.trim())) return fail('Please enter a valid email address.');
-    if (!f.adult.checked) return fail('Beta testers must be 18 or older and use an Android phone.');
-    if (!f.agree.checked) return fail('Please accept the terms and privacy policy.');
-    btn.disabled = true; btn.textContent = 'Sending…';
-    fetch(form.action, { method: 'POST', body: new FormData(form), headers: { 'Accept': 'application/json' } })
-      .then(function (r) { return r.json().catch(function () { return { ok: false }; }); })
-      .then(function (d) {
-        if (!d.ok) return fail(d.error || 'Something went wrong. Please try again, or email info@digitack.co.za.');
-        document.getElementById('done-email').textContent = f.email.value.trim();
-        form.hidden = true;
-        document.getElementById('beta-done').hidden = false;
-      })
-      .catch(function () { fail('We could not reach the server. Check your connection and try again.'); });
-  });
-})();
-</script>
+<script src="assets/js/beta.js"></script>
 
 <footer class="site-footer">
   <div class="wrap">
@@ -212,7 +185,7 @@
     </div>
     <div class="legal-line">
       <span>Homeward Paws is a product of Digitack (Pty) Ltd, South Africa.</span>
-      <span>info@digitack.co.za · © 2026 Digitack (Pty) Ltd</span>
+      <span>info@homewardpaws.org.za · Technical support: info@digitack.co.za · © 2026 Digitack (Pty) Ltd</span>
       <span>Google Play is a trademark of Google LLC.</span>
     </div>
   </div>

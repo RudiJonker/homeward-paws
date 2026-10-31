@@ -19,7 +19,7 @@ return [
     'site_url'      => 'https://digitack.co.za/paws',
     'from_email'    => 'noreply@digitack.co.za',
     'from_name'     => 'Homeward Paws',
-    'reply_to'      => 'info@digitack.co.za',
+    'reply_to'      => 'info@homewardpaws.org.za',
     'notify_email'  => 'info@digitack.co.za',   // gets a note for each sign-up
 
     // ---- Storage and abuse limits ----

@@ -1,0 +1,23 @@
+# homewardpaws.org.za (xneelo, Apache), live from 31 Oct 2026. The beta, its download
+# and the dashboard stay at digitack.co.za/paws/.
+ErrorDocument 404 /404.html
+
+# HTTPS only, on homewardpaws.org.za without www (also catches the temporary host name).
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule ^ https://homewardpaws.org.za%{REQUEST_URI} [L,R=301]
+RewriteCond %{HTTP_HOST} !^homewardpaws\.org\.za$ [NC]
+RewriteRule ^ https://homewardpaws.org.za%{REQUEST_URI} [L,R=301]
+
+# Security headers, the same as /paws. Scripts may only come from files on this site
+# (script-src 'self'): no inline <script> code. hp-deploy blocks a deploy that adds one.
+# HSTS starts at one month; raise to max-age=31536000 once it has run without issues.
+<IfModule mod_headers.c>
+  Header always set Strict-Transport-Security "max-age=2592000"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set X-Frame-Options "DENY"
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://krpihktxtivossbfuziq.supabase.co; connect-src 'self' https://krpihktxtivossbfuziq.supabase.co; font-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
+</IfModule>
+AddType font/woff2 .woff2
+AddType text/plain .txt

@@ -18,6 +18,10 @@ Do not upload `README.md`.
 
 `404.html`, `robots.txt`, `sitemap.xml` and `.htaccess` (Apache/cPanel: HTTPS redirect, 404 page, caching) are included.
 
+At launch on the final domain, `site/htaccess-for-final-domain.txt` must become `.htaccess` at the new domain's root (and `site/404-for-final-domain.html` must become `404.html`); the current `site/.htaccess` and `site/404.html` are the temporary `/paws/` versions (one-line `ErrorDocument`, `/paws/`-prefixed links). `build.py` rebuilds `404.html` with relative links, so re-apply the `/paws/` prefix after any rebuild while the site lives under `/paws/`.
+
+`dashboard/` is the password-protected project dashboard (live at `/paws/dashboard/`). Its `data.json` and `.htpasswd` exist only on the server and must never be committed (the repo is public). The one deliberate difference between archive and live: the archive's `dashboard/.htaccess` says `AuthUserFile /path/to/.htpasswd`, while the live file uses the real server path.
+
 ## Fill these in before going live
 
 Search the HTML files for `[` to find every placeholder.

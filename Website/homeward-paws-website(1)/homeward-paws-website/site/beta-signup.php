@@ -35,6 +35,21 @@ function clean(string $key, int $max): string {
 
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') { header('Location: beta.html', true, 303); exit; }
 
+// ---- Only accept the form from our own site: Origin, or Referer when Origin is missing ----
+function request_origin(): string {
+    $origin = trim((string)($_SERVER['HTTP_ORIGIN'] ?? ''));
+    if ($origin === '' || $origin === 'null') {
+        $p = parse_url((string)($_SERVER['HTTP_REFERER'] ?? ''));
+        $origin = isset($p['scheme'], $p['host'])
+            ? $p['scheme'] . '://' . $p['host'] . (isset($p['port']) ? ':' . $p['port'] : '')
+            : '';
+    }
+    return strtolower(rtrim($origin, '/'));
+}
+if (!in_array(request_origin(), ['https://www.digitack.co.za', 'https://digitack.co.za'], true)) {
+    respond(false, 'Please sign up using the form on our website.');
+}
+
 // ---- Bot checks (silently "succeed" so bots learn nothing) ----
 if (clean('website', 200) !== '') respond(true);
 $started = (int)($_POST['started'] ?? 0);
@@ -179,7 +194,7 @@ $html = '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="
   . '<p style="margin:0 0 18px;font-size:14px;line-height:1.55;color:#5E6B78;background:#FBF3DC;border-radius:12px;padding:12px 14px">When we release an update, we\'ll email you. Install it over the app you have; your account and animals are kept.</p>'
   . '<p style="margin:0;font-size:15px;line-height:1.55">Found a bug or have an idea? <strong>Just reply to this email.</strong></p>'
   . '</td></tr>'
-  . '<tr><td style="padding:18px 8px;font-size:12px;line-height:1.6;color:#5E6B78">Homeward Paws is a product of Digitack (Pty) Ltd, South Africa · <a href="mailto:info@digitack.co.za" style="color:#227A71">info@digitack.co.za</a><br>'
+  . '<tr><td style="padding:18px 8px;font-size:12px;line-height:1.6;color:#5E6B78">Homeward Paws is a product of Digitack (Pty) Ltd, South Africa · <a href="mailto:info@homewardpaws.org.za" style="color:#227A71">info@homewardpaws.org.za</a><br>'
   . 'You received this because you signed up as a beta tester at <a href="' . $h($site) . '/beta.html" style="color:#227A71">' . $h(preg_replace('#^https?://#', '', $site)) . '/beta.html</a>. To stop beta emails, reply with "Remove me". '
   . '<a href="' . $h($site) . '/privacy-policy.html" style="color:#227A71">Privacy policy</a></td></tr>'
   . '</table></td></tr></table></body></html>';

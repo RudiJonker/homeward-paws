@@ -1,0 +1,24 @@
+# Homeward Paws project dashboard: login required for everything in this folder.
+# Passwords live in .htpasswd here (Apache refuses to serve .ht* files).
+# Plain-HTTP requests are sent to HTTPS before any login prompt, so the password
+# is never requested over an unencrypted connection. .ht* files are always refused
+# (an <If> is merged last, so it must not re-allow them).
+<If "%{HTTPS} == 'on' && %{REQUEST_FILENAME} !~ m#/\.ht[^/]*$#">
+  AuthType Basic
+  AuthName "Homeward Paws dashboard"
+  # The live file uses the real absolute path to .htpasswd on the server (deliberate archive difference).
+  AuthUserFile /path/to/.htpasswd
+  Require valid-user
+</If>
+<ElseIf "%{HTTPS} == 'on'">
+  Require all denied
+</ElseIf>
+<Else>
+  Require all denied
+  ErrorDocument 403 https://www.digitack.co.za/paws/dashboard/
+</Else>
+
+<IfModule mod_headers.c>
+  Header set Cache-Control "no-store"
+  Header set X-Robots-Tag "noindex, nofollow"
+</IfModule>

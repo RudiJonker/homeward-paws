@@ -4,7 +4,7 @@ Specification for email verification, password recovery and links back into the 
 
 ## 0. Website address
 
-The Homeward Paws website currently lives at **`https://digitack.co.za/paws/`** (temporary). The email templates' logo and legal links, the legacy bridge page and the app's website links use that base. When the site moves to its own domain, change the two templates, Supabase Site URL and Redirect URLs, `EXPO_PUBLIC_WEBSITE_URL`, and the App Links host (§7).
+The public website lives at **`https://homewardpaws.org.za/`**. The app's legal links use that base. The email logo and legacy confirmation bridge remain at `https://digitack.co.za/paws/`. New confirmation and recovery emails use codes only. Keep the old auth redirect allowlist entry for already sent links, and add the new site's auth path when updating Supabase URL configuration. HTTPS App Links still need separate Android verification (§7).
 
 ## 1. Principles
 
@@ -12,7 +12,7 @@ The Homeward Paws website currently lives at **`https://digitack.co.za/paws/`** 
 - Keep legacy email-link handling for links already sent. New signup and recovery emails do not depend on a browser or device deep link.
 - The website page never verifies anything on page load. Verification happens only after a person taps a button.
 - The app never reveals whether an email address has an account; password reset shows the same message.
-- Auth email comes from `noreply@digitack.co.za` through `smtp.digitack.co.za:465`. People are told to write to `info@digitack.co.za`.
+- Auth email comes from `noreply@digitack.co.za` through `smtp.digitack.co.za:465`. The main contact is `info@homewardpaws.org.za`; technical support remains `info@digitack.co.za`.
 
 ## 2. Email content
 
@@ -37,7 +37,7 @@ Templates live in `supabase/email-templates/`. Codes expire after 1 hour (Supaba
 The app accepts these as the same destination:
 
 - `homewardpaws://auth/confirm?token_hash=…&type=…`
-- `https://digitack.co.za/paws/auth/confirm.html?token_hash=…&type=…` once Android App Links are verified (§7)
+- `https://homewardpaws.org.za/auth/confirm.html?token_hash=…&type=…` once Android App Links are verified (§7). Legacy `https://digitack.co.za/paws/auth/confirm.html` links remain accepted.
 
 Handling, in an `AuthCallback` route registered in `linking.js`:
 

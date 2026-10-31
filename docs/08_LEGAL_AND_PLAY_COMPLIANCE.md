@@ -1,20 +1,20 @@
 # Homeward Paws Legal and Google Play Compliance
 
-The temporary website (`https://digitack.co.za/paws/`) publishes the privacy policy, terms, account deletion page and child safety standards until `homewardpaws.co.za` is live. Google checks that the app behaves as those pages say. Treat this document as a requirement list: if a build would contradict it, stop and ask.
+The public website (`https://homewardpaws.org.za/`) publishes the privacy policy, terms, account deletion page and child safety standards. Google checks that the app behaves as those pages say. Treat this document as a requirement list: if a build would contradict it, stop and ask.
 
 ## 1. Published URLs
 
 | Page | URL | Where the app links to it |
 |---|---|---|
-| Privacy policy | `https://digitack.co.za/paws/privacy-policy.html` | Signup (with acceptance), Profile › Privacy policy, Help |
-| Terms of use | `https://digitack.co.za/paws/terms.html` | Signup (with acceptance), Profile › Terms of use |
-| Delete account | `https://digitack.co.za/paws/delete-account.html` | Profile › Delete account (info line), Help |
-| Child safety standards | `https://digitack.co.za/paws/child-safety.html` | Help and Safety |
-| Help and safety | `https://digitack.co.za/paws/safety.html` | Help and Safety, Contact Support |
+| Privacy policy | `https://homewardpaws.org.za/privacy-policy.html` | Signup (with acceptance), Profile › Privacy policy, Help |
+| Terms of use | `https://homewardpaws.org.za/terms.html` | Signup (with acceptance), Profile › Terms of use |
+| Delete account | `https://homewardpaws.org.za/delete-account.html` | Profile › Delete account (info line), Help |
+| Child safety standards | `https://homewardpaws.org.za/child-safety.html` | Help and Safety |
+| Help and safety | `https://homewardpaws.org.za/safety.html` | Help and Safety, Contact Support |
 
 Store these as environment-driven constants (`EXPO_PUBLIC_WEBSITE_URL` plus paths), not hard-coded strings scattered across screens. Open them in the in-app browser or system browser.
 
-Contact: `info@digitack.co.za` everywhere. Subject conventions: "Privacy", "Delete my Homeward Paws account", "Child safety".
+Main contact: `info@homewardpaws.org.za`. Technical support: `info@digitack.co.za`. Subject conventions: "Privacy", "Delete my Homeward Paws account", "Child safety".
 
 ## 2. What the public pages promise the app does
 
@@ -31,7 +31,7 @@ Contact: `info@digitack.co.za` everywhere. Subject conventions: "Privacy", "Dele
 - Found reports may use "anonymous finder" as the public identity.
 - Visitors can browse public reports without an account.
 
-Checkpoint 3 website update (22 October 2026): Andre published the street-or-broader rule on the live privacy page, including the warning not to put private details in free text or photos. The live site at `https://digitack.co.za/paws/` is authoritative; the tracked `Website/` folder is a copy kept in step with it. Send future website changes to Andre for deployment first, then update the archive. Public report publication still requires server-side enforcement and SQL tests.
+Checkpoint 3 website update (22 October 2026): Andre published the street-or-broader rule on the live privacy page, including the warning not to put private details in free text or photos. Since 31 October, the live site at `https://homewardpaws.org.za/` is authoritative; the tracked `Website/` folder is a copy kept in step with it. Send future website changes to Andre for deployment first, then update the archive. Public report publication still requires server-side enforcement and SQL tests.
 
 ### Safety and moderation
 - Every report, sighting, photo and profile has **Report**, with reasons including **Child safety**.

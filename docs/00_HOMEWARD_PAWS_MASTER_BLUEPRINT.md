@@ -314,12 +314,12 @@ Material changes require an explicit decision and documentation update.
 |---|---|
 | Product name | Homeward Paws |
 | Logo, app icon, splash | Done; see `07_BRAND_AND_ASSETS.md` |
-| Support and privacy contact | `info@digitack.co.za` (the only address used publicly) |
-| Website | `https://digitack.co.za/paws/` temporarily; move to `homewardpaws.co.za` when live |
-| Privacy policy URL | `https://digitack.co.za/paws/privacy-policy.html` |
-| Terms of use URL | `https://digitack.co.za/paws/terms.html` |
-| Account deletion URL | `https://digitack.co.za/paws/delete-account.html` |
-| Child safety standards URL | `https://digitack.co.za/paws/child-safety.html` |
+| Main contact | `info@homewardpaws.org.za`; technical support: `info@digitack.co.za` |
+| Website | `https://homewardpaws.org.za/`; legacy beta and email fallback remain at `https://digitack.co.za/paws/` |
+| Privacy policy URL | `https://homewardpaws.org.za/privacy-policy.html` |
+| Terms of use URL | `https://homewardpaws.org.za/terms.html` |
+| Account deletion URL | `https://homewardpaws.org.za/delete-account.html` |
+| Child safety standards URL | `https://homewardpaws.org.za/child-safety.html` |
 | Minimum account age | 18 |
 | Play listing developer name | Digitack (Pty) Ltd |
 

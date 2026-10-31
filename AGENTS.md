@@ -4,7 +4,7 @@ Instructions for Codex and any other coding agent working in this repository. Re
 
 ## What this is
 
-Homeward Paws is a free, Android-first community app for South Africa that helps reunite missing, found and sighted animals with their people. Owner: Digitack (Pty) Ltd. Public contact: `info@digitack.co.za`. Temporary website and legal pages: `https://digitack.co.za/paws/` until the dedicated domain is live.
+Homeward Paws is a free, Android-first community app for South Africa that helps reunite missing, found and sighted animals with their people. Owner: Digitack (Pty) Ltd. Main contact: `info@homewardpaws.org.za`; technical support: `info@digitack.co.za`. Public website and legal pages: `https://homewardpaws.org.za/`. The legacy `https://digitack.co.za/paws/` site retains beta tools and the email confirmation fallback.
 
 ## Read before changing anything
 

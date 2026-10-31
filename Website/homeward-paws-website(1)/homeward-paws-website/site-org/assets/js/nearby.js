@@ -54,9 +54,9 @@
     ['North West', -26.59, 24.17]
   ];
 
-  // Until the Play listing exists, send visitors to the beta sign-up page.
-  // At launch: 'https://play.google.com/store/apps/details?id=za.co.homewardpaws.app'
-  var PLAY_URL = 'beta.html';
+  // Until the Play listing exists, send visitors to the beta sign-up page, which
+  // stays on digitack.co.za/paws. At launch: 'https://play.google.com/store/apps/details?id=za.co.homewardpaws.app'
+  var PLAY_URL = 'https://www.digitack.co.za/paws/beta.html';
   var OWNER_FIELDS = ['reporter_name', 'phone', 'whatsapp', 'contact_in_app'];
   var PAGE = 12;
   var $ = function (id) { return document.getElementById(id); };

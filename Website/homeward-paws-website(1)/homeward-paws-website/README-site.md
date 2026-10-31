@@ -1,10 +1,19 @@
-# Homeward Paws website — launch version
+# Homeward Paws website
 
-A static, mobile-first, low-data website for the Google Play launch of Homeward Paws. Plain HTML and CSS, no JavaScript, no frameworks and no third-party requests (Nunito is self-hosted). Upload the contents of this folder to the web root of your host.
+A static, mobile-first, low-data website for Homeward Paws. Plain HTML and CSS with a few small self-hosted scripts (Animals near you, the beta form, the email-confirmation fallback and the dashboard). No frameworks, no analytics, no cookies and no third-party requests; fonts and supabase-js are self-hosted.
 
-Do not upload `README.md`.
+Since 31 October 2026 there are two live sites, each with an archive folder here that matches it byte for byte:
+
+| Folder | Live at | Contents |
+|---|---|---|
+| `site-org/` | https://homewardpaws.org.za/ | The public site: home, Animals near you, help and safety, privacy policy, terms, child safety, delete account, `app-ads.txt`, `robots.txt`, `sitemap.xml`, the root `.htaccess` and `404.html`, and the email-confirmation fallback (`auth/confirm.html`). |
+| `site/` | https://www.digitack.co.za/paws/ | The beta: `beta.html`, `beta-thanks.html`, `beta-signup.php`, `beta-config.php`, `beta-download.php`, `downloads/`; the dashboard; the older email-confirmation fallback. Its `.htaccess` sends the old public pages to homewardpaws.org.za with a 301 redirect (query strings kept). The old public pages in this folder are no longer reachable. |
+
+The beta stays on digitack.co.za because the sign-up list is stored on that server. Deploys run from Andre's machine with `hp-deploy` (plan, approval, deploy, hash and link checks). The live site is the source of truth: Andre deploys first, and the patch for this archive follows. This README is not part of either site.
 
 ## Pages and the Play Console fields they satisfy
+
+All URLs are on `https://homewardpaws.org.za`.
 
 | Page | URL | Play Console field |
 |---|---|---|
@@ -16,9 +25,7 @@ Do not upload `README.md`.
 | Help and safety | `/safety.html` | Store listing support info; in-app Help |
 | `app-ads.txt` | `/app-ads.txt` | Required by AdMob; must sit at the root of the website entered in the Play listing |
 
-`404.html`, `robots.txt`, `sitemap.xml` and `.htaccess` (Apache/cPanel: HTTPS redirect, 404 page, caching) are included.
-
-At launch on the final domain, `site/htaccess-for-final-domain.txt` must become `.htaccess` at the new domain's root (and `site/404-for-final-domain.html` must become `404.html`); the current `site/.htaccess` and `site/404.html` are the temporary `/paws/` versions (one-line `ErrorDocument`, `/paws/`-prefixed links). `build.py` rebuilds `404.html` with relative links, so re-apply the `/paws/` prefix after any rebuild while the site lives under `/paws/`.
+`404.html`, `robots.txt`, `sitemap.xml` and `.htaccess` are included. `site-org/.htaccess` sends http, www and the host's temporary name to `https://homewardpaws.org.za` and sets the security headers (CSP with `script-src 'self'`, so no inline scripts). `site/.htaccess` sets the same headers for `/paws/` and holds the redirects; `site/404.html` keeps its `/paws/`-prefixed links.
 
 `dashboard/` is the password-protected project dashboard (live at `/paws/dashboard/`). Its `data.json` and `.htpasswd` exist only on the server and must never be committed (the repo is public). The one deliberate difference between archive and live: the archive's `dashboard/.htaccess` says `AuthUserFile /path/to/.htpasswd`, while the live file uses the real server path.
 
@@ -38,8 +45,8 @@ Search the HTML files for `[` to find every placeholder.
 
 ## Assumptions to confirm
 
-- **Domain:** `homewardpaws.co.za`. If it differs, find and replace it across all files (canonical tags, Open Graph tags, sitemap, robots).
-- **Email:** every page uses `info@digitack.co.za`. Privacy, deletion and child safety requests are told to use a subject line ("Privacy", "Delete my Homeward Paws account", "Child safety"), so set up mail filters for those. Google's reviewers may email it.
+- **Domain:** `homewardpaws.org.za` (decided 31 Oct 2026; canonical tags, Open Graph tags, sitemap and robots use it). The beta pages' canonical links point to `https://www.digitack.co.za/paws/`.
+- **Email:** the main address is `info@homewardpaws.org.za`: general questions, privacy and POPIA, deletion, child safety, terms, content concerns, beta feedback and removal, and the reply address of the tester emails. `info@digitack.co.za` is the technical support address: footers ("Technical support"), Help and safety section 7, and technical error or help messages. The note for each beta sign-up goes to `info@digitack.co.za`. Privacy, deletion and child safety requests are told to use a subject line ("Privacy", "Delete my Homeward Paws account", "Child safety"), so set up mail filters for those. Google's reviewers may email the main address.
 - **Minimum age 18.** Set the Play Console target audience to 18+ to match, which keeps the app out of the Families policy.
 - **Retention periods** in the privacy policy and delete-account page (evidence 90 days after a claim closes, moderation records 24 months, logs 90 days, backups 30 days, deletion within 30 days). They are reasonable defaults; change them if your setup differs and keep both pages consistent.
 - **Have the privacy policy and terms reviewed** by someone qualified in POPIA and the Consumer Protection Act before launch.
@@ -67,7 +74,7 @@ Google checks that the website and the app agree. These need building into the a
 - [x] Support contact shown on every page.
 - [x] No Google Play badge until the listing is live; trademark attribution in the footer.
 - [x] `app-ads.txt` at the site root (add your AdMob line).
-- [ ] Placeholders filled in, and `info@digitack.co.za` monitored for deletion and child safety requests.
+- [ ] Placeholders filled in, and `info@homewardpaws.org.za` monitored for deletion and child safety requests.
 - [ ] Host serves the site worldwide (some hosting firewalls block foreign IPs; Google's reviewers are outside South Africa).
 
 ## After launch
@@ -76,11 +83,11 @@ Replace both "Coming soon to Google Play" blocks on the home page with the offic
 
 ## Source
 
-The legal and help pages are assembled from `src/` by `build.py` in the separate source folder (shared header and footer). Editing the built HTML directly is fine for small changes.
+The legal and help pages were assembled from `source/src/` by `source/build.py` (shared header and footer). **Don't run `build.py` until it is reconciled:** its output no longer matches the live `/paws/` pages (it adds a footer link to six pages and drops the `/paws/` prefixes in `404.html`), and it knows nothing of `site-org/`. Until then, edit `site-org/` directly for the public pages, and `site/` together with `source/src/` for the beta pages.
 
 ## Photos
 
-The photos in `assets/img/photos/` are cropped from the original Homeward Paws flyer and upscaled. They look fine at their current sizes but are soft on large, high-density screens. Replace them with higher-resolution versions using the same file names before launch; no code changes are needed.
+The photos in `site-org/assets/img/photos/` (also in `site/`) are cropped from the original Homeward Paws flyer and upscaled. They look fine at their current sizes but are soft on large, high-density screens. Replace them with higher-resolution versions using the same file names before launch; no code changes are needed.
 
 | File | Used for | Minimum size | Subject |
 |---|---|---|---|

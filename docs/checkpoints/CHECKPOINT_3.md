@@ -193,3 +193,8 @@
 - Andre reports that `https://homewardpaws.org.za/` now serves the public pages and `https://digitack.co.za/paws/` retains beta tools and the legacy email confirmation fallback. The supplied deployed-site patch was applied to the tracked website archive; the app's local website base, legal links and repository email-template links now point to the new domain. The email logo remains on `/paws/`.
 - Main contact is `info@homewardpaws.org.za`; technical support remains `info@digitack.co.za`. The app keeps its technical support action. Existing APKs retain their build-time website URL and rely on the old site's redirects until rebuilt.
 - Supabase Site URL, redirect allowlist and live email templates still require dashboard updates; the repository edits do not change those remote settings. The EAS preview environment website URL must also be updated before a cloud APK build. No database migration, feature gate or live authentication setting changed in this update.
+
+## Dashboard administrator account repair (31 October 2026)
+
+- The private beta dashboard refused Andre's current app account. A read-only SQL Editor check confirmed that the active, email-confirmed account had the default `member` role while Rudi's account remained `admin`. This was consistent with Andre's account having been recreated after its earlier role assignment.
+- Rudi ran a one-time SQL Editor update guarded by the current account identity, email-confirmation state, active status and existing `member` role. Its result showed Andre's account as `admin` and `active`. No schema or other profile changed. Dashboard refresh by Andre remains the final user-visible check.

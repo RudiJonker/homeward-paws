@@ -197,4 +197,4 @@
 ## Dashboard administrator account repair (31 October 2026)
 
 - The private beta dashboard refused Andre's current app account. A read-only SQL Editor check confirmed that the active, email-confirmed account had the default `member` role while Rudi's account remained `admin`. This was consistent with Andre's account having been recreated after its earlier role assignment.
-- Rudi ran a one-time SQL Editor update guarded by the current account identity, email-confirmation state, active status and existing `member` role. Its result showed Andre's account as `admin` and `active`. No schema or other profile changed. Dashboard refresh by Andre remains the final user-visible check.
+- Rudi ran a one-time SQL Editor update guarded by the current account identity, email-confirmation state, active status and existing `member` role. Its result showed Andre's account as `admin` and `active`. No schema or other profile changed. Andre then refreshed the dashboard and confirmed that the app-account list loads.
